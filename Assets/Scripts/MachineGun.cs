@@ -5,17 +5,12 @@ using UnityEngine;
 
 public class MachineGun : MonoBehaviour
 {
-    private enum TypeHumanoid
-    {
-        None, Player, AI
-    }
     [SerializeField] private EnemyManager _enemyManager;
     [SerializeField] private Bullet _bullet;
     [SerializeField] private Transform _sitDownPlace;
     [SerializeField] private float _bulletDamage = 5;
 
-    private TypeHumanoid _typeHumanoid = TypeHumanoid.None;
-    private Humanoid _player;
+    private Player _player;
     private float fireDelay = 0.2f;
     private float _bulletSpeed = 1.5f;
     private float _nextFireTime;
@@ -38,22 +33,14 @@ public class MachineGun : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Humanoid humanoid))
+        if (other.TryGetComponent(out Player player))
         {
-            if (other.TryGetComponent(out Player player))
+            if (Camera.main.TryGetComponent(out FollowingCamera camera))
             {
-                if (Camera.main.TryGetComponent(out FollowingCamera camera))
-                {
-                    camera.RotationTo(transform.rotation.eulerAngles);
-                }
-
-                _typeHumanoid = TypeHumanoid.Player;
+                camera.RotationTo(transform.rotation.eulerAngles);
             }
 
-            if (_typeHumanoid == TypeHumanoid.None)
-                _typeHumanoid = TypeHumanoid.AI;
-
-            _player = humanoid;
+            _player = player;
             Use();
         }
     }
@@ -91,9 +78,7 @@ public class MachineGun : MonoBehaviour
         float duration = 0.5f;
         
         _player.transform.DORotate(_sitDownPlace.position, duration);
-
-        if (_typeHumanoid == TypeHumanoid.Player)
-            _player.transform.DOMove(_sitDownPlace.position, duration).OnComplete(() => Camera.main.GetComponent<FollowingCamera>().IsFollowing(false));
+        _player.transform.DOMove(_sitDownPlace.position, duration).OnComplete(() => Camera.main.GetComponent<FollowingCamera>().IsFollowing(false));
     }
 
     private void RotationToTarget(Vector3 position)

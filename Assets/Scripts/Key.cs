@@ -6,6 +6,11 @@ public class Key : MonoBehaviour
 {
     public enum Animations
     {
-        Idle, Walking, Running
+        Idle, Walking, Running, Chop
+    }
+
+    public enum Prefs
+    {
+        Wood, Rock, Coins, Gem
     }
 }

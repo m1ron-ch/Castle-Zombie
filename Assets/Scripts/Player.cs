@@ -11,8 +11,14 @@ public class Player : Humanoid
 
     private Rigidbody _rb;
     private Animator _animator;
-    private float _speed = 8;
+    private Transform _resource;
+    private Key.Animations _currentAnimation;
+    private Coroutine _attack;
+    private float _speed = 5;
+    private int _damage = 10;
     private bool _isFreeze;
+    private bool _isAttackResource;
+
 
     private void Start()
     {
@@ -42,17 +48,71 @@ public class Player : Humanoid
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out ObjectType objectType))
+        {
+            switch (objectType.ObjectT)
+            {
+                case ObjectType.ObjectTypes.Tree:
+                case ObjectType.ObjectTypes.Rock:
+                    if (_resource == other.gameObject.transform)
+                        return;
+
+                    if (other.gameObject.TryGetComponent(out Resource resource))
+                    {
+                        _isAttackResource = true;
+                        _resource = other.gameObject.transform;
+                        _currentAnimation = Key.Animations.Chop;
+
+                        _attack = StartCoroutine(Attack(resource));
+                    }
+                    break;
+                case ObjectType.ObjectTypes.MachineGun:
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        _resource = null;
+        StopCoroutine();
+        _animator.ResetTrigger(_currentAnimation.ToString());
+
+        if (_resource == other.gameObject.transform)
+        {
+        }
+    }
+
+    private IEnumerator Attack(Resource resource)
+    {
+        while (_isAttackResource)
+        {
+            if (!resource.Damage(_damage))
+            {
+                StopCoroutine();
+            }
+
+            _animator.SetTrigger(_currentAnimation.ToString());
+
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    private void StopCoroutine()
+    {
+        _isAttackResource = false;
+       StopCoroutine(_attack);
+    }
+
     public override void Freeze()
     {
         base.Freeze();
 
         _isFreeze = true;
         _joystick.Deactivate();
-
-        if (Camera.main.TryGetComponent(out FollowingCamera camera))
-        {
-            // camera.IsFollowing(false);
-            // camera.transform.DOMove(camera.transform.position + Vector3.forward * 2.5f, 0.5f);
-        }
     }
 }

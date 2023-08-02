@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
         Expectation, Hiding, Survival, End
     }
 
+    [SerializeField] private Humanoid _humanoid;
     [SerializeField] private Timer _timer;
     [SerializeField] private EnemyManager _enemyManager;
     [SerializeField] private PlayerAIManager _playerAIManager;

@@ -9,13 +9,13 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private Player _player;
 
     [Header("Spawn Points For Enemy")]
-    [SerializeField] private Transform _spawPointB;
-    [SerializeField] private Transform _spawPointA;
+    [SerializeField] private List<Transform> _spawPoints;
 
     private static List<Enemy> _enemies = new List<Enemy>();
     private GameManager _gameManager;
     private float _nearestDistance = 10;
     private int _enemyCount = 150;
+    private bool _isSpawning;
 
     public static List<Enemy> Enemies => _enemies;
 
@@ -28,7 +28,7 @@ public class EnemyManager : MonoBehaviour
     {
         for (int i = 0; i < _enemyCount; i++)
         {
-            SpawnEnemy(new Vector3(Random.Range(_spawPointA.position.x, _spawPointB.position.x), 0, Random.Range(_spawPointA.position.z, _spawPointB.position.z)));
+            SpawnEnemy(_spawPoints[Random.Range(0, _spawPoints.Count)].position);
         }
     }
 
