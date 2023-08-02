@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3ec58126a26efcd41aba4419826fac08
+guid: ae2559b9dae04ff4986913ace32f5f12
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -41,9 +41,9 @@ ModelImporter:
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 30
+      lastFrame: 40
       wrapMode: 0
-      orientationOffsetY: -39.78
+      orientationOffsetY: -35.19
       level: 0.4
       cycleOffset: 0
       loop: 0
@@ -88,8 +88,8 @@ ModelImporter:
     bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 1
-    maxBonesPerVertex: 67
-    minBoneWeight: 0.023
+    maxBonesPerVertex: 8
+    minBoneWeight: 0.001
     optimizeBones: 1
     meshOptimizationFlags: -1
     indexFormat: 0

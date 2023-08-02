@@ -20,7 +20,6 @@ public class Resource : MonoBehaviour
         _collider = GetComponent<Collider>();
 
         _choping = _collider.bounds.extents.z / 2f;
-        Debug.Log(_choping + " " + gameObject.name);
     }
 
     public bool Damage(int value)
@@ -41,12 +40,12 @@ public class Resource : MonoBehaviour
 
     private void AddResource()
     {
-        switch (_objectType.ObjectT)
+        switch (_objectType.Type)
         {
-            case ObjectType.ObjectTypes.Tree:
+            case Key.ObjectType.Tree:
                 ResourceController.AddResource(Key.Prefs.Wood, 10);
                 break;
-            case ObjectType.ObjectTypes.Rock:
+            case Key.ObjectType.Rock:
                 ResourceController.AddResource(Key.Prefs.Rock, 5);
                 break;
         }
@@ -58,17 +57,8 @@ public class Resource : MonoBehaviour
             return;
 
         transform.DOMoveY(-7, 2).SetDelay(0.5f)
-            .OnStart(() => _collider.isTrigger = true)
-            .OnComplete(() =>
-            {
-                transform.gameObject.SetActive(false);
-            });
-
-        /*float rotation = GameObject.FindGameObjectWithTag("Player").transform.rotation.eulerAngles.y;*/
-        /*        if (_objectType.ObjectT == ObjectType.ObjectTypes.Tree)
-                    transform.DORotate(new Vector3(0, 180, 0), 2)
-                        .OnStart(() => {  })
-                        .OnComplete(() => { transform.gameObject.active = false; });*/
+            .OnStart(() => _collider.enabled = false)
+            .OnComplete(() => transform.gameObject.SetActive(false));
     }
 
 }

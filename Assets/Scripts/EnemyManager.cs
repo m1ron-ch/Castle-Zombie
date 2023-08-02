@@ -14,7 +14,7 @@ public class EnemyManager : MonoBehaviour
     private static List<Enemy> _enemies = new List<Enemy>();
     private GameManager _gameManager;
     private float _nearestDistance = 10;
-    private int _enemyCount = 150;
+    private int _enemyCount = 2;
     private bool _isSpawning;
 
     public static List<Enemy> Enemies => _enemies;
@@ -24,11 +24,16 @@ public class EnemyManager : MonoBehaviour
         _gameManager = gameManager;
     }
 
+    private void Start()
+    {
+        StartSpaw();
+    }
+
     public void StartSpaw()
     {
         for (int i = 0; i < _enemyCount; i++)
         {
-            SpawnEnemy(_spawPoints[Random.Range(0, _spawPoints.Count)].position);
+            SpawnEnemy(_spawPoints[i].position);
         }
     }
 
@@ -40,14 +45,15 @@ public class EnemyManager : MonoBehaviour
     public void SpawnEnemy(Vector3 position)
     {
         Enemy enemy = Instantiate(_enemyPrefab, position, Quaternion.identity);
-        enemy.MoveTo(_gameManager.RoomManager.Rooms[Random.Range(0, _gameManager.RoomManager.Rooms.Count)].Door.transform.position);
+        // enemy.MoveTo(_gameManager.RoomManager.Rooms[Random.Range(0, _gameManager.RoomManager.Rooms.Count)].Door.transform.position);
+        enemy.Stop();
         _enemies.Add(enemy);
     }
 
     public Enemy GetNearestEnemy(Vector3 position)
     {
         Enemy nearestEnemy = null;
-        float nearestDistance = Mathf.Infinity;
+        float nearestDistance = 3;
 
         foreach (Enemy enemy in _enemies)
         {

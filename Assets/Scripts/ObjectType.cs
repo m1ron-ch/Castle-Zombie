@@ -4,10 +4,5 @@ using UnityEngine;
 
 public class ObjectType : MonoBehaviour
 {
-    public enum ObjectTypes
-    {
-        Tree, Rock, MachineGun
-    }
-
-    public ObjectTypes ObjectT;
+    public Key.ObjectType Type;
 }

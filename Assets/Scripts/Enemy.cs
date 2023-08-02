@@ -15,9 +15,12 @@ public class Enemy : MonoBehaviour
     private Animator _animator;
     private float _damage = 5;
 
+    public NavMeshAgent Agent => _agent;
+
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponent<Animator>();  
 
         _healthBar.SetMaxHealth(_maxHealth);
     }
@@ -34,6 +37,12 @@ public class Enemy : MonoBehaviour
     public void MoveTo(Vector3 position)
     {
         _agent.destination = position;
+    }
+
+    public void Stop()
+    {
+        _agent.isStopped = true;
+        _animator.SetBool(Key.Animations.Walking.ToString(), false);
     }
 
     public void Health(float value)

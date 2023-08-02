@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,74 +6,35 @@ using UnityEngine;
 [RequireComponent(typeof(UIResource))]  
 public class ResourceController : MonoBehaviour
 {
-    private static Dictionary<Key.Prefs, int> resources = new Dictionary<Key.Prefs, int>();
+    [SerializeField] private static Inventory _inventory;
+
+    private static Dictionary<Key.Prefs, int> _resources = new Dictionary<Key.Prefs, int>();
     private static UIResource _ui;
 
     private void Awake()
     {
         _ui = GetComponent<UIResource>();
+        _inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
 
-        resources.Add(Key.Prefs.Wood, PlayerPrefs.GetInt(Key.Prefs.Wood.ToString(), 0));
-        resources.Add(Key.Prefs.Rock, PlayerPrefs.GetInt(Key.Prefs.Rock.ToString(), 0));
-        resources.Add(Key.Prefs.Coins, PlayerPrefs.GetInt(Key.Prefs.Coins.ToString(), 0));
-        resources.Add(Key.Prefs.Gem, PlayerPrefs.GetInt(Key.Prefs.Gem.ToString(), 0));
+        foreach (Key.Prefs pref in Enum.GetValues(typeof(Key.Prefs)))
+            _resources.Add(pref, PlayerPrefs.GetInt(pref.ToString(), 0));
 
         RefreshUI();
     }
-
-    #region Add Logic
-
-    /*    public static void AddWood(int value)
-        {
-            AddResource(Key.Prefs.Wood, value);
-        }
-
-        public static void AddRock(int value)
-        {
-            AddResource(Key.Prefs.Rock, value);
-        }
-
-        public static void AddCoins(int value)
-        {
-            AddResource(Key.Prefs.Coins, value);
-        }
-
-        public static void AddGem(int value)
-        {
-            AddResource(Key.Prefs.Gem, value);
-        }
-
-        public static void RemoveWood(int value)
-        {
-            AddResource(Key.Prefs.Wood, -value);
-        }
-
-        public static void RemoveRock(int value)
-        {
-            AddResource(Key.Prefs.Rock, -value);
-        }
-
-        public static void RemoveCoins(int value)
-        {
-            AddResource(Key.Prefs.Coins, -value);
-        }
-
-        public static void RemoveGem(int value)
-        {
-            AddResource(Key.Prefs.Gem, -value);
-        }*/
-    #endregion
 
     public static void AddResource(Key.Prefs resourceKey, int value)
     {
         if (value <= 0)
             return;
 
-        int currentAmount = resources[resourceKey];
-        resources[resourceKey] = currentAmount + value;
-        _ui.RefreshUI(resourceKey, resources[resourceKey]);
+        if (!_inventory.Add(value))
+            return;
 
-        SaveResource(resourceKey, resources[resourceKey]);
+        int currentAmount = _resources[resourceKey];
+        _resources[resourceKey] = currentAmount + value;
+        _ui.RefreshUI(resourceKey, _resources[resourceKey]);
+
+        SaveResource(resourceKey, _resources[resourceKey]);
     }
 
     public static void RemoveResource(Key.Prefs resourceKey, int value)
@@ -80,27 +42,25 @@ public class ResourceController : MonoBehaviour
         if (value <= 0)
             return;
 
-        int currentAmount = resources[resourceKey];
-        resources[resourceKey] = currentAmount - value;
-        _ui.RefreshUI(resourceKey, resources[resourceKey]);
+        if (!_inventory.Remove(value))
+            return;
 
-        SaveResource(resourceKey, resources[resourceKey]);
+        int currentAmount = _resources[resourceKey];
+        _resources[resourceKey] = currentAmount - value;
+        _ui.RefreshUI(resourceKey, _resources[resourceKey]);
+
+        SaveResource(resourceKey, _resources[resourceKey]);
     }
 
     private void RefreshUI()
     {
-        foreach (KeyValuePair<Key.Prefs, int> res in resources)
+        foreach (KeyValuePair<Key.Prefs, int> res in _resources)
             _ui.RefreshUI(res.Key, res.Value);
-
-/*        _ui.RefreshWood(resources[Key.Prefs.Wood]);
-        _ui.RefreshRock(resources[Key.Prefs.Rock]);
-        _ui.RefreshCoins(resources[Key.Prefs.Coins]);
-        _ui.RefreshGem(resources[Key.Prefs.Gem]);*/
     }
 
     private static void SaveResource(Key.Prefs resourceKey, int value)
     {
-        resources[resourceKey] = value;
+        _resources[resourceKey] = value;
         PlayerPrefs.SetInt(resourceKey.ToString(), value);
     }
 }
