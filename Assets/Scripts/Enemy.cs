@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float _maxHealth = 100;
     [SerializeField] private float _health = 100;
 
+    private Transform _target;
     private NavMeshAgent _agent;
     private Animator _animator;
     private float _damage = 5;
@@ -24,7 +25,15 @@ public class Enemy : MonoBehaviour
 
         _healthBar.SetMaxHealth(_maxHealth);
     }
-    
+
+    private void FixedUpdate()
+    {
+        return;
+
+        if (_target != null)
+            _agent.destination = _target.position;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent(out Bullet bullet))
@@ -34,9 +43,9 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void MoveTo(Vector3 position)
+    public void MoveTo(Transform target)
     {
-        _agent.destination = position;
+        _target = target;
     }
 
     public void Stop()

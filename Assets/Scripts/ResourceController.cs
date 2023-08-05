@@ -11,23 +11,32 @@ public class ResourceController : MonoBehaviour
     private static Dictionary<Key.Prefs, int> _resources = new Dictionary<Key.Prefs, int>();
     private static UIResource _ui;
 
+    public static int Wood => _resources[Key.Prefs.Wood];
+    public static int Rock => _resources[Key.Prefs.Rock];
+    public static int Coins => _resources[Key.Prefs.Coins];
+    public static int Gem => _resources[Key.Prefs.Gem];
+
+    #region MonoBehaviour
     private void Awake()
     {
-        _ui = GetComponent<UIResource>();
         _inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
+        _ui = GetComponent<UIResource>();
+
 
         foreach (Key.Prefs pref in Enum.GetValues(typeof(Key.Prefs)))
             _resources.Add(pref, PlayerPrefs.GetInt(pref.ToString(), 0));
 
         RefreshUI();
     }
+    #endregion
 
     public static void AddResource(Key.Prefs resourceKey, int value)
     {
         if (value <= 0)
             return;
 
-        if (!_inventory.Add(value))
+        if (((resourceKey != Key.Prefs.Coins) && (resourceKey != Key.Prefs.Gem)) 
+            && (!_inventory.Add(value))) 
             return;
 
         int currentAmount = _resources[resourceKey];
@@ -42,7 +51,8 @@ public class ResourceController : MonoBehaviour
         if (value <= 0)
             return;
 
-        if (!_inventory.Remove(value))
+        if (!_inventory.Remove(value)
+            && ((resourceKey != Key.Prefs.Coins) || (resourceKey != Key.Prefs.Gem)))
             return;
 
         int currentAmount = _resources[resourceKey];

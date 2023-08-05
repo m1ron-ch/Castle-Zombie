@@ -25,7 +25,7 @@ public class Player : Humanoid
     private float _speed = 5;
     private int _damage = 10;
 
-
+    #region MonoBehaviour
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
@@ -106,6 +106,7 @@ public class Player : Humanoid
         StopCoroutine();
         _animator.ResetTrigger(_currentAnimation.ToString());
     }
+    #endregion
 
     private IEnumerator Attack(Resource resource)
     {
