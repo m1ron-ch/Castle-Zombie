@@ -1,30 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Util : MonoBehaviour
+public static class Util
 {
-/*    public static void SaveWood(int value)
+    public static void Invoke(this MonoBehaviour mb, Action f, float delay)
     {
-        if (value > 0)
-            PlayerPrefs.SetInt(Key.Prefs.Wood.ToString(), value);
+        mb.StartCoroutine(InvokeRoutine(f, delay));
     }
 
-    public static void SaveRock(int value)
+    private static IEnumerator InvokeRoutine(System.Action f, float delay)
     {
-        if (value > 0)
-            PlayerPrefs.SetInt(Key.Prefs.Rock.ToString(), value);
+        yield return new WaitForSeconds(delay);
+        f();
     }
-
-    public static void SaveCoins(int value)
-    {
-        if (value > 0)
-            PlayerPrefs.SetInt(Key.Prefs.Coins.ToString(), value);
-    }
-
-    public static void SaveGem(int value)
-    {
-        if (value > 0)
-            PlayerPrefs.SetInt(Key.Prefs.Gem.ToString(), value);
-    }*/
 }

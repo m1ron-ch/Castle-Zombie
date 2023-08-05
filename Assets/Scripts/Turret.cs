@@ -3,54 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Turret : MonoBehaviour
+public class Turret : Gun
 {
     [SerializeField] private Transform _rotationTurret;
-    [SerializeField] private EnemyManager _enemyManager;
-    [SerializeField] private Bullet _bullet;
-    [SerializeField] private float _bulletDamage = 5;
-
     private Quaternion _defaultTurretPosition;
-    private float fireDelay = 0.2f;
-    private float _bulletSpeed = 1.5f;
-    private float _nextFireTime;
 
     private void Update()
     {
-        Enemy enemy = _enemyManager.GetNearestEnemy(transform.position);
-
-        if (enemy != null)
-        {
-            RotationToTarget(enemy.transform.position);
-            if (Time.time >= _nextFireTime)
-            {
-                Shoot();
-                _nextFireTime = Time.time + fireDelay;
-            }
-        }
+        if (_target != null)
+            RotationToTarget(_target.transform.position);
         else
             RotationDefaultPosition();
-    }
-
-    public void Init(EnemyManager enemyManager, Quaternion defaultPosition)
-    {
-        _enemyManager = enemyManager;
-        _defaultTurretPosition = defaultPosition;
-    }
-
-    private void Shoot()
-    {
-        Bullet bullet = Instantiate(_bullet, Vector3.zero, Quaternion.identity);
-        bullet.transform.position = _rotationTurret.transform.position;
-        bullet.SetDamage(_bulletDamage);
-
-        Vector3 targetPosition = _rotationTurret.transform.position + _rotationTurret.transform.forward * 30f;
-        bullet.transform.DOMove(targetPosition, _bulletSpeed).SetEase(Ease.Linear).OnComplete(() => DestroyBullet(bullet.gameObject));
-    }
-
-    private void DestroyBullet(GameObject bullet)
-    {
-        Destroy(bullet);
     }
 
     private void RotationToTarget(Vector3 position)

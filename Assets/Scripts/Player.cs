@@ -30,6 +30,8 @@ public class Player : Humanoid
     {
         _rb = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
+
+        _personalWeapon.gameObject.SetActive(false);
     }
 
     private void FixedUpdate()
@@ -49,11 +51,13 @@ public class Player : Humanoid
             _currentAnimation = Key.Animations.PistolRunning;
             _animator.SetBool(Key.Animations.PistolIdle.ToString(), true);
             _animator.SetBool(Key.Animations.Idle.ToString(), false);
+            _animator.SetBool(Key.Animations.Running.ToString(), false);
         }
         else
         {
             _status = Status.None;
-            _personalWeapon.gameObject.SetActive(false);
+            if (_personalWeapon.gameObject.activeInHierarchy)
+                Util.Invoke(this, () => _personalWeapon.gameObject.SetActive(false), 0.2f);
 
             _currentAnimation = Key.Animations.Running;
             _animator.SetBool(Key.Animations.PistolIdle.ToString(), false);
@@ -85,7 +89,6 @@ public class Player : Humanoid
                     {
                         _status = Status.Mine;
                         _resource = other.gameObject.transform;
-                        _currentAnimation = Key.Animations.Chop;
 
                         _attack = StartCoroutine(Attack(resource));
                     }
@@ -104,7 +107,8 @@ public class Player : Humanoid
         _resource = null;
 
         StopCoroutine();
-        _animator.ResetTrigger(_currentAnimation.ToString());
+        if (_currentAnimation == Key.Animations.Chop)
+            _animator.ResetTrigger(_currentAnimation.ToString());
     }
     #endregion
 
@@ -117,7 +121,7 @@ public class Player : Humanoid
                 StopCoroutine();
             }
 
-            _animator.SetTrigger(_currentAnimation.ToString());
+            _animator.SetTrigger(Key.Animations.Chop.ToString());
 
             yield return new WaitForSeconds(1f);
         }

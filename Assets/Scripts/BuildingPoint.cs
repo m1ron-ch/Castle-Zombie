@@ -10,12 +10,17 @@ public class BuildingPoint : MonoBehaviour
     [SerializeField] private TMP_Text _priceT;
     [SerializeField] private int _price;
 
+    private Vector3 _defaultScale;
     private int _payment = 200;
     private bool _isAddCoin;
 
     #region MonoBehaviour
     private void Awake()
     {
+        _defaultScale = _building.localScale;
+        _building.localScale = Vector3.zero;
+        _building.gameObject.SetActive(false);
+
         RefreshUI();
     }
 
@@ -47,6 +52,16 @@ public class BuildingPoint : MonoBehaviour
         {
             if (!_isAddCoin)
                 yield break;
+
+            if (_price <= 0)
+            {
+                _building.gameObject.SetActive(true);
+                _building.SetParent(null);
+                _building.DOScale(_defaultScale, 1f);
+                Destroy(gameObject);
+
+                yield break;
+            }
 
             yield return new WaitForSeconds(0.5f);
 

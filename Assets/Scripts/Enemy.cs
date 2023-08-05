@@ -14,14 +14,17 @@ public class Enemy : MonoBehaviour
     private Transform _target;
     private NavMeshAgent _agent;
     private Animator _animator;
+    private Rigidbody _rg;
     private float _damage = 5;
 
     public NavMeshAgent Agent => _agent;
+    public Rigidbody Rigidbody => _rg;
 
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();  
+        _rg = GetComponent<Rigidbody>();
 
         _healthBar.SetMaxHealth(_maxHealth);
     }
