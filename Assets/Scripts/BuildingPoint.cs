@@ -57,7 +57,7 @@ public class BuildingPoint : MonoBehaviour
             {
                 _building.gameObject.SetActive(true);
                 _building.SetParent(null);
-                _building.DOScale(_defaultScale, 1f);
+                _building.DOScale(_defaultScale * 1.4f, 0.35f).OnComplete(() => _building.DOScale(_defaultScale, 0.3f));
                 Destroy(gameObject);
 
                 yield break;

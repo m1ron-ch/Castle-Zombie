@@ -31,8 +31,6 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        return;
-
         if (_target != null)
             _agent.destination = _target.position;
     }
@@ -49,6 +47,7 @@ public class Enemy : MonoBehaviour
     public void MoveTo(Transform target)
     {
         _target = target;
+        _animator.SetBool(Key.Animations.Walking.ToString(), true);
     }
 
     public void Stop()

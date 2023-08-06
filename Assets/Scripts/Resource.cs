@@ -25,7 +25,7 @@ public class Resource : MonoBehaviour
     public bool Damage(int value)
     {
         _chopPositionY -= _choping;
-        transform.DOShakeRotation(0.7f, 10, 5, 10)
+        transform.DOShakeRotation(0.7f, 5, 1, 5)
             .SetDelay(0.3f)
             .OnStart(() => {
                 transform.DOMoveY(_chopPositionY, 0.2f);

@@ -8,8 +8,15 @@ public class Turret : Gun
     [SerializeField] private Transform _rotationTurret;
     private Quaternion _defaultTurretPosition;
 
+    private void Awake()
+    {
+        _defaultTurretPosition = transform.rotation;
+    }
+
     private void Update()
     {
+        FindTarget();
+
         if (_target != null)
             RotationToTarget(_target.transform.position);
         else

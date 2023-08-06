@@ -10,12 +10,21 @@ public class FollowingCamera : MonoBehaviour
     private Vector3 _offset;
     private bool _isFollowing = true;
 
-    private void Start()
+    public Vector3 Offset => _offset;
+
+    private void Awake()
     {
         _offset = Camera.main.transform.position - _player.transform.position;
     }
 
     private void FixedUpdate()
+    {
+        return;
+        if (_isFollowing)
+            transform.position = Vector3.Slerp(transform.position, _player.position + _offset, 0.2f);
+    }
+
+    public void Following()
     {
         if (_isFollowing)
             transform.position = Vector3.Slerp(transform.position, _player.position + _offset, 0.2f);

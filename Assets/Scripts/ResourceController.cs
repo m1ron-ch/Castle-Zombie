@@ -51,8 +51,8 @@ public class ResourceController : MonoBehaviour
         if (value <= 0)
             return;
 
-        if (!_inventory.Remove(value)
-            && ((resourceKey != Key.Prefs.Coins) || (resourceKey != Key.Prefs.Gem)))
+        if (((resourceKey != Key.Prefs.Coins) && (resourceKey != Key.Prefs.Gem))
+            && (!_inventory.Remove(value)))
             return;
 
         int currentAmount = _resources[resourceKey];

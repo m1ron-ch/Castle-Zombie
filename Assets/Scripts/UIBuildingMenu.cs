@@ -23,7 +23,7 @@ public class UIBuildingMenu : MonoBehaviour
         building.transform.rotation = _poinForBuilding.transform.rotation;
         if (building.TryGetComponent(out Turret turret))
         {
-            turret.Init(_enemyManager, _poinForBuilding.transform.rotation);
+            turret.Init(_enemyManager);
             _poinForBuilding.Build(building);
             Hide();
         }

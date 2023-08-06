@@ -3,19 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gun : MonoBehaviour
+public abstract class Gun : MonoBehaviour
 {
     [SerializeField] private Transform _shootingPoint;
     [SerializeField] private EnemyManager _enemyManager;
     [SerializeField] private Bullet _bullet;
+
+    [Header("Params")]
     [SerializeField] private float _bulletDamage = 5;
+    [SerializeField] protected float fireDelay = 0.4f;
+    [SerializeField] protected float _bulletSpeed = 0.4f;
 
     protected Enemy _target;
-    private float fireDelay = 0.4f;
-    private float _bulletSpeed = 0.4f;
     private float _nextFireTime;
 
-    private void Update()
+    public virtual void Init(EnemyManager enemyManager)
+    {
+        _enemyManager = enemyManager;
+    }
+
+    protected void FindTarget()
     {
         _target = _enemyManager.GetNearestEnemy(transform.position);
 
@@ -29,21 +36,10 @@ public class Gun : MonoBehaviour
         }
     }
 
-    public virtual void Init(EnemyManager enemyManager)
-    {
-        _enemyManager = enemyManager;
-    }
-
-    public void Init(EnemyManager enemyManager, Quaternion defaultPosition)
-    {
-        _enemyManager = enemyManager;
-        // _defaultTurretPosition = defaultPosition;
-    }
-
     protected virtual void Shoot()
     {
         Bullet bullet = Instantiate(_bullet, Vector3.zero, Quaternion.identity);
-        // bullet.transform.position = _rotationTurret.transform.position;
+        bullet.transform.position = _shootingPoint.transform.position;
         bullet.SetDamage(_bulletDamage);
 
         Vector3 targetVelocity = _target.Rigidbody.velocity;
