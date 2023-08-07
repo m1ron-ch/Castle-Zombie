@@ -15,7 +15,6 @@ public class BuildingManager : MonoBehaviour
 
         Init();
         HideAllBuildings();
-        Save();
         Load();
         ShowCurrentBuildings(_currentBuildingHierarchy);
     }
