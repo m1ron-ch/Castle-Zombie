@@ -17,7 +17,7 @@ public class UIBuildingMenu : MonoBehaviour
 
     private PointForBuilding _poinForBuilding;
 
-    public void CreateTurret()
+/*    public void CreateTurret()
     {
         GameObject building = Instantiate(_turret.Prefab, _poinForBuilding.transform.position, Quaternion.identity);
         building.transform.rotation = _poinForBuilding.transform.rotation;
@@ -42,7 +42,7 @@ public class UIBuildingMenu : MonoBehaviour
         Hide();
 
         // _poinForBuilding.Room.RemovePoint(_poinForBuilding) ;
-    }
+    }*/
 
     public void ShowBuildMenu(PointForBuilding point)
     {

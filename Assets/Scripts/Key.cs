@@ -14,8 +14,13 @@ public class Key : MonoBehaviour
         Tree, Rock, MachineGun
     }
 
+    public enum ResourcePrefs
+    {
+        Wood, Rock, Coins, Gem
+    }
+
     public enum Prefs
     {
-        Wood, Rock, Coins, Gem, InvetoryCapacity, MaxInvetoryCapacity,
+        InvetoryCapacity, MaxInvetoryCapacity, CurrentBuildingHierarchy, Buldings
     }
 }

@@ -37,7 +37,7 @@ public class Player : Humanoid
 
     private void FixedUpdate()
     {
-        Debug.Log("Status: " + _status);
+        //Debug.Log("Status: " + _status);
         _camera.Following();
         _animator.SetBool(_currentAnimation.ToString(), _joystick.IsTouch);
 

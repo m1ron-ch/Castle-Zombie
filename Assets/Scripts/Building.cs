@@ -1,21 +1,35 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Building", menuName = "ScriptableObjects/Building", order = 1)]
-public class Building : ScriptableObject
+public class Building : MonoBehaviour
 {
-    [SerializeField] private GameObject _prefab;
-    [SerializeField] private List<int> _prices = new();
+    private Vector3 _defaultScale;
 
-    private int _lvl = 1;
-
-    public GameObject Prefab => _prefab;
-    public int Lvl => _lvl;
-    public int Cost => _prices[_lvl - 1];
-
-    public void Upgrade()
+    private void Awake()
     {
-        _lvl++;
+        _defaultScale = transform.localScale;
+        transform.localScale = Vector3.zero;
+
+        Hide();
+    }
+
+    public void Build()
+    {
+        Show();
+
+        transform.SetParent(null);
+        transform.DOScale(_defaultScale * 1.4f, 0.35f).OnComplete(() => transform.DOScale(_defaultScale, 0.3f));
+    }
+
+    public void Show()
+    {
+        transform.gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        transform.gameObject.SetActive(false);
     }
 }

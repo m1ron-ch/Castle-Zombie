@@ -17,7 +17,7 @@ public class UIPlayerProgress : MonoBehaviour
     {
         double completionPercentage = CalculatePercentage(currentValue, minValue, maxValue);
         var completionText = $"Выполнено: {completionPercentage}%";
-        Debug.Log(completionText);
+        // Debug.Log(completionText);
     }
 
     double CalculatePercentage(int currentValue, int minValue, int maxValue)

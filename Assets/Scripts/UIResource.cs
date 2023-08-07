@@ -11,20 +11,20 @@ public class UIResource : MonoBehaviour
     [SerializeField] private TMP_Text _coins;
     [SerializeField] private TMP_Text _gem;
 
-    public void RefreshUI(Key.Prefs resourceKey, int value)
+    public void RefreshUI(Key.ResourcePrefs resourceKey, int value)
     {
         switch (resourceKey)
         {
-            case Key.Prefs.Wood:
+            case Key.ResourcePrefs.Wood:
                 RefreshWood(value);
                 break;
-            case Key.Prefs.Rock:
+            case Key.ResourcePrefs.Rock:
                 RefreshRock(value);
                 break;
-            case Key.Prefs.Coins:
+            case Key.ResourcePrefs.Coins:
                 RefreshCoins(value);
                 break;
-            case Key.Prefs.Gem:
+            case Key.ResourcePrefs.Gem:
                 RefreshGem(value);
                 break;
             default:

@@ -4,23 +4,25 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 
+[System.Serializable]
 public class BuildingPoint : MonoBehaviour
 {
-    [SerializeField] private Transform _building;
-    [SerializeField] private TMP_Text _priceT;
-    [SerializeField] private int _price;
+    [SerializeField] private Building _building;
+    [SerializeField] private TMP_Text _costText;
+    [SerializeField] private int _cost;
 
-    private Vector3 _defaultScale;
-    private int _payment = 200;
+    private BuildingManager _buildingManager;
+    private int _payment = 1;
     private bool _isAddCoin;
+    private bool _isBuild;
+
+    public Building Building => _building;
+    public int Cost => _cost;
+    public bool IsBuild => _isBuild;
 
     #region MonoBehaviour
     private void Awake()
     {
-        _defaultScale = _building.localScale;
-        _building.localScale = Vector3.zero;
-        _building.gameObject.SetActive(false);
-
         RefreshUI();
     }
 
@@ -39,38 +41,69 @@ public class BuildingPoint : MonoBehaviour
     }
     #endregion
 
+    public void Init(BuildingManager buildingManager)
+    {
+        _buildingManager = buildingManager;
+    }
+
+    public void Init(int cost)
+    {
+        _cost = cost;
+        RefreshUI();
+    }
+
+    public void Build(bool isLoad = false)
+    {
+        _cost = 0;
+        _isBuild = true;
+        _building.Build();
+
+        if (!isLoad)
+            _buildingManager.Save();
+
+        Destroy(gameObject);
+    }
+
+    public void Show()
+    {
+        transform.gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        transform.gameObject.SetActive(false);
+    }
+
     private void RefreshUI()
     {
-        _priceT.text = _price.ToString();
-        _priceT.transform.DOScale(1.2f, 0.3f).OnComplete(() => _priceT.transform.DOScale(1, 0.2f));
+        _costText.text = _cost.ToString();
+        _costText.transform.DOScale(1.2f, 0.3f).OnComplete(() => _costText.transform.DOScale(1, 0.2f));
     }
 
     private IEnumerator AddCoin()
     {
         int allCoins = ResourceController.Coins;
-        while (allCoins - _payment >= _price)
+        while (allCoins - _payment >= _cost)
         {
             if (!_isAddCoin)
                 yield break;
 
-            if (_price <= 0)
-            {
-                _building.gameObject.SetActive(true);
-                _building.SetParent(null);
-                _building.DOScale(_defaultScale * 1.4f, 0.35f).OnComplete(() => _building.DOScale(_defaultScale, 0.3f));
-                Destroy(gameObject);
+            if (_cost <= 0)
+            {   
+                Build();
 
                 yield break;
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.15f);
 
             allCoins = ResourceController.Coins;
-            ResourceController.RemoveResource(Key.Prefs.Coins, _payment);
-            _price -= _payment;
-            _payment = _price > _payment ? _payment : _price;
+            ResourceController.RemoveResource(Key.ResourcePrefs.Coins, _payment);
+            _cost -= _payment;
+            // _payment = _price > _payment ? _payment : _price;
 
             RefreshUI();
+            _buildingManager.Save();
         }
     }
 }

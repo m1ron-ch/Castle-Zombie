@@ -27,10 +27,7 @@ public class Resource : MonoBehaviour
         _chopPositionY -= _choping;
         transform.DOShakeRotation(0.7f, 10, 5, 10)
             .SetDelay(0.5f)
-            .OnStart(() => {
-                // transform.DOMoveY(_chopPositionY, 0.2f);
-                AddResource();
-            })
+            .OnStart(() => AddResource())
             .OnComplete(() => Death());
 
         _health -= value;
@@ -43,10 +40,10 @@ public class Resource : MonoBehaviour
         switch (_objectType.Type)
         {
             case Key.ObjectType.Tree:
-                ResourceController.AddResource(Key.Prefs.Wood, 10);
+                ResourceController.AddResource(Key.ResourcePrefs.Wood, 10);
                 break;
             case Key.ObjectType.Rock:
-                ResourceController.AddResource(Key.Prefs.Rock, 5);
+                ResourceController.AddResource(Key.ResourcePrefs.Rock, 5);
                 break;
         }
     }
