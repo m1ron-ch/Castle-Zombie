@@ -11,12 +11,22 @@ public class BuildingManager : MonoBehaviour
 
     private void Awake()
     {
+        ResetJSON();
+        Save();
+
         _currentBuildingHierarchy = PlayerPrefs.GetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
 
         Init();
         HideAllBuildings();
         Load();
         ShowCurrentBuildings(_currentBuildingHierarchy);
+    }
+
+    // TEST 
+    public void ResetJSON()
+    {
+        PlayerPrefs.SetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
+        PlayerPrefs.SetString(Key.Prefs.Buldings.ToString(), null);
     }
 
     public void Save()
@@ -32,7 +42,7 @@ public class BuildingManager : MonoBehaviour
                 BuildingData buildingData = new BuildingData();
                 buildingData.Name = building.Building.name;
                 buildingData.IsBuild = building.IsBuild;
-                buildingData.Cost = building.Cost;
+                buildingData.BuildingCost = building.Cost;
 
                 rowData.Buildings.Add(buildingData);
             }
@@ -61,7 +71,7 @@ public class BuildingManager : MonoBehaviour
         {
             for (int j = 0; j < buildingsData[i].Buildings.Count; j++)
             {
-                _buildings[i].Buildings[j].Init(buildingsData[i].Buildings[j].Cost);
+                _buildings[i].Buildings[j].Init(buildingsData[i].Buildings[j].BuildingCost);
                 if (buildingsData[i].Buildings[j].IsBuild)
                 {
                     _buildings[i].Buildings[j].Build(true);
@@ -140,7 +150,7 @@ public class BuildingData
 {
     public string Name;
     public bool IsBuild;
-    public int Cost;
+    public List<BuildingPointCost> BuildingCost;
 }
 
 /*public class BuildingManager : MonoBehaviour

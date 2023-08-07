@@ -8,7 +8,7 @@ public class JoystickSetterExample : MonoBehaviour
     public VariableJoystick variableJoystick;
     public Text valueText;
     public Image background;
-    public Sprite[] axisSprites;
+    public UnityEngine.Sprite[] axisSprites;
 
     public void ModeChanged(int index)
     {

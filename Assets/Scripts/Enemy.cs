@@ -71,7 +71,6 @@ public class Enemy : MonoBehaviour
 
     public void Damage(float value)
     {
-        return;
         if (_health - value > 0)
             _health -= value;
         else 

@@ -8,36 +8,31 @@ using DG.Tweening;
 public class BuildingPoint : MonoBehaviour
 {
     [SerializeField] private Building _building;
-    [SerializeField] private TMP_Text _costText;
-    [SerializeField] private int _cost;
+    [SerializeField] private UIBuildingPoint _ui;
+    [SerializeField] private List<BuildingPointCost> _cost;
 
     private BuildingManager _buildingManager;
     private int _payment = 1;
-    private bool _isAddCoin;
+    private bool _isAddResource;
     private bool _isBuild;
 
     public Building Building => _building;
-    public int Cost => _cost;
+    public List<BuildingPointCost> Cost => _cost;
     public bool IsBuild => _isBuild;
 
     #region MonoBehaviour
-    private void Awake()
-    {
-        RefreshUI();
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            _isAddCoin = true;
+            _isAddResource = true;
             StartCoroutine(AddCoin());
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        _isAddCoin = false;
+        _isAddResource = false;
     }
     #endregion
 
@@ -46,15 +41,14 @@ public class BuildingPoint : MonoBehaviour
         _buildingManager = buildingManager;
     }
 
-    public void Init(int cost)
+    public void Init(List<BuildingPointCost> buildingPoint)
     {
-        _cost = cost;
-        RefreshUI();
+        _ui.Init(buildingPoint);
     }
 
     public void Build(bool isLoad = false)
     {
-        _cost = 0;
+        // _cost = 0;
         _isBuild = true;
         _building.Build();
 
@@ -74,16 +68,28 @@ public class BuildingPoint : MonoBehaviour
         transform.gameObject.SetActive(false);
     }
 
-    private void RefreshUI()
+    private IEnumerator AddResource()
     {
-        _costText.text = _cost.ToString();
-        _costText.transform.DOScale(1.2f, 0.3f).OnComplete(() => _costText.transform.DOScale(1, 0.2f));
+        while (true)
+        {
+            if (!_isAddResource)
+                yield break;
+
+            yield return new WaitForSeconds(0.15f);
+
+            foreach (BuildingPointCost cost in _cost)
+            {
+                ResourceController.RemoveResource(cost.Resource, _payment);
+                cost.Cost -= _payment;
+            }
+        }
     }
 
     private IEnumerator AddCoin()
     {
         int allCoins = ResourceController.Coins;
-        while (allCoins - _payment >= _cost)
+        yield return null;
+/*        while (allCoins - _payment >= _cost)
         {
             if (!_isAddCoin)
                 yield break;
@@ -104,6 +110,14 @@ public class BuildingPoint : MonoBehaviour
 
             RefreshUI();
             _buildingManager.Save();
-        }
+        }*/
     }
+}
+
+[System.Serializable]
+public class BuildingPointCost
+{
+    // public Dictionary<Key.ResourcePrefs, int> Cost = new();
+    public Key.ResourcePrefs Resource;
+    public int Cost;
 }
