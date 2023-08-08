@@ -16,7 +16,7 @@ public class Key : MonoBehaviour
 
     public enum ResourcePrefs
     {
-        Wood, Rock, Coins, Gem
+        Wood, Rock, Coins, Gems
     }
 
     public enum Prefs

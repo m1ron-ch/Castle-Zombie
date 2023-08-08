@@ -9,9 +9,19 @@ public class UIResourceContent : MonoBehaviour
     [SerializeField] private Image _image; 
     [SerializeField] private TMP_Text _cost;
 
-    public void Init(UnityEngine.Sprite sprite, int cost)
+    private Key.ResourcePrefs _resource;
+
+    public Key.ResourcePrefs Resource => _resource;
+
+    public void Init(Key.ResourcePrefs resource, int cost, UnityEngine.Sprite sprite)
     {
+        _resource = resource;
+        _cost.text = cost.ToString();
         _image.sprite = sprite;
+    }
+
+    public void RefreshUI(int cost)
+    {
         _cost.text = cost.ToString();
     }
 }

@@ -11,20 +11,40 @@ public class UIBuildingPoint : MonoBehaviour
 
 
     private List<BuildingPointCost> _buildingCost = new();
+    private List<UIResourceContent> _buildingResources = new();
 
     public void Init(List<BuildingPointCost> buildingCost)
     {
         _buildingCost = buildingCost;
 
-        RefreshUI();
+        InstatiateContent();
     }
 
-    private void RefreshUI()
+    public void RefreshUI(List<BuildingPointCost> buildingPointCost)
+    {
+/*        Debug.Log(buildingPointCost.Resource + ": " + buildingPointCost.Cost);
+        _resource.RefreshUI(buildingPointCost.Cost);
+*/
+        foreach (BuildingPointCost cost in buildingPointCost)
+        {
+            foreach (UIResourceContent content in _buildingResources)
+            {
+                if (content.Resource == cost.Resource)
+                {
+                    content.RefreshUI(cost.Cost);
+                }
+            }
+        }
+    }
+
+    private void InstatiateContent()
     {
         foreach (BuildingPointCost buildCost in _buildingCost)
         {
             UIResourceContent content = Instantiate(_resource, _instantiatePoint);
-            content.Init(_sprite.GetSprite(buildCost.Resource), buildCost.Cost);
+            content.Init(buildCost.Resource, buildCost.Cost, _sprite.GetSprite(buildCost.Resource));
+
+            _buildingResources.Add(content);
         }
     }
 }

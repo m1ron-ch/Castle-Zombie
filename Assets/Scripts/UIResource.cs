@@ -3,13 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class UIResource : MonoBehaviour
 {
-    [SerializeField] private TMP_Text _wood;
-    [SerializeField] private TMP_Text _rock;
+    [SerializeField] private Sprite _sprite;
+
+    [Header("Coins")]
+    [SerializeField] private Image _coinsImage;
     [SerializeField] private TMP_Text _coins;
-    [SerializeField] private TMP_Text _gem;
+
+    [Header("Gems")]
+    [SerializeField] private Image _gemsImage;
+    [SerializeField] private TMP_Text _gems;
+
+    [Header("Rock")]
+    [SerializeField] private Image _rocksImage;
+    [SerializeField] private TMP_Text _rock;
+
+    [Header("Wood")]
+    [SerializeField] private Image _woodImage;
+    [SerializeField] private TMP_Text _wood;
+
+    #region MonoBehaviour
+    private void Awake()
+    {
+        _coinsImage.sprite = _sprite.Coins;
+        _gemsImage.sprite = _sprite.Gems;
+        _rocksImage.sprite = _sprite.Rock;
+        _woodImage.sprite = _sprite.Wood;
+    }
+    #endregion
 
     public void RefreshUI(Key.ResourcePrefs resourceKey, int value)
     {
@@ -24,7 +48,7 @@ public class UIResource : MonoBehaviour
             case Key.ResourcePrefs.Coins:
                 RefreshCoins(value);
                 break;
-            case Key.ResourcePrefs.Gem:
+            case Key.ResourcePrefs.Gems:
                 RefreshGem(value);
                 break;
             default:
@@ -36,26 +60,25 @@ public class UIResource : MonoBehaviour
     private void RefreshWood(int value)
     {
         _wood.text = value.ToString();
-        Resize(_wood.transform);
-
+        Resize(_woodImage.transform);
     }
 
     private void RefreshRock(int value)
     {
         _rock.text = value.ToString();
-        Resize(_rock.transform);
+        Resize(_rocksImage.transform);
     }
 
     private void RefreshCoins(int value)
     {
         _coins.text = value.ToString();
-        Resize(_coins.transform);
+        Resize(_coinsImage.transform);
     }
 
     private void RefreshGem(int value)
     {
-        _gem.text = value.ToString();
-        Resize(_gem.transform);
+        _gems.text = value.ToString();
+        Resize(_gemsImage.transform);
     }
 
     private void Resize(Transform obj)

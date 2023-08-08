@@ -9,7 +9,7 @@ public class BuildingPoint : MonoBehaviour
 {
     [SerializeField] private Building _building;
     [SerializeField] private UIBuildingPoint _ui;
-    [SerializeField] private List<BuildingPointCost> _cost;
+    [SerializeField] private List<BuildingPointCost> _cost = new();
 
     private BuildingManager _buildingManager;
     private int _payment = 1;
@@ -25,14 +25,21 @@ public class BuildingPoint : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            _isAddResource = true;
-            StartCoroutine(AddCoin());
+            IsAtPoint(player.IsMove);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         _isAddResource = false;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out Player player))
+        {
+            IsAtPoint(player.IsMove);
+        }
     }
     #endregion
 
@@ -41,9 +48,10 @@ public class BuildingPoint : MonoBehaviour
         _buildingManager = buildingManager;
     }
 
-    public void Init(List<BuildingPointCost> buildingPoint)
+    public void Init(List<BuildingPointCost> buildingPointCost)
     {
-        _ui.Init(buildingPoint);
+        _cost = buildingPointCost;
+        _ui.Init(buildingPointCost);
     }
 
     public void Build(bool isLoad = false)
@@ -68,6 +76,15 @@ public class BuildingPoint : MonoBehaviour
         transform.gameObject.SetActive(false);
     }
 
+    private void IsAtPoint(bool isMove)
+    {
+        if (isMove || _isAddResource)
+            return;
+
+        _isAddResource = true;
+        StartCoroutine(AddResource());
+    }
+
     private IEnumerator AddResource()
     {
         while (true)
@@ -79,45 +96,23 @@ public class BuildingPoint : MonoBehaviour
 
             foreach (BuildingPointCost cost in _cost)
             {
-                ResourceController.RemoveResource(cost.Resource, _payment);
-                cost.Cost -= _payment;
+                if ((cost.Cost > 0) && ResourceController.RemoveResource(cost.Resource, _payment))
+                {
+                    cost.Cost -= _payment;
+
+                    _buildingManager.Save();
+                }
             }
+
+            _ui.RefreshUI(_cost);
         }
     }
-
-    private IEnumerator AddCoin()
-    {
-        int allCoins = ResourceController.Coins;
-        yield return null;
-/*        while (allCoins - _payment >= _cost)
-        {
-            if (!_isAddCoin)
-                yield break;
-
-            if (_cost <= 0)
-            {   
-                Build();
-
-                yield break;
-            }
-
-            yield return new WaitForSeconds(0.15f);
-
-            allCoins = ResourceController.Coins;
-            ResourceController.RemoveResource(Key.ResourcePrefs.Coins, _payment);
-            _cost -= _payment;
-            // _payment = _price > _payment ? _payment : _price;
-
-            RefreshUI();
-            _buildingManager.Save();
-        }*/
-    }
+    
 }
 
 [System.Serializable]
 public class BuildingPointCost
 {
-    // public Dictionary<Key.ResourcePrefs, int> Cost = new();
     public Key.ResourcePrefs Resource;
     public int Cost;
 }

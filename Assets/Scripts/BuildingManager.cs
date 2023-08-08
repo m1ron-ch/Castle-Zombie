@@ -11,8 +11,8 @@ public class BuildingManager : MonoBehaviour
 
     private void Awake()
     {
-        ResetJSON();
-        Save();
+/*        ResetJSON();
+        Save();*/
 
         _currentBuildingHierarchy = PlayerPrefs.GetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
 
@@ -28,6 +28,7 @@ public class BuildingManager : MonoBehaviour
         PlayerPrefs.SetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
         PlayerPrefs.SetString(Key.Prefs.Buldings.ToString(), null);
     }
+    // 
 
     public void Save()
     {
@@ -85,8 +86,12 @@ public class BuildingManager : MonoBehaviour
     private void Init()
     {
         foreach (BuildingRow row in _buildings)
+        {
             foreach (BuildingPoint building in row.Buildings)
+            {
                 building.Init(this);
+            }
+        }
     }
 
     private bool IsAllBuildingsBuildInHierarchy()

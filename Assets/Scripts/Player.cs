@@ -26,6 +26,8 @@ public class Player : Humanoid
     private float _speed = 5;
     private int _damage = 10;
 
+    public bool IsMove => _joystick.IsTouch;
+
     #region MonoBehaviour
     private void Start()
     {
