@@ -7,7 +7,6 @@ using UnityEngine;
 public class ResourceController : MonoBehaviour
 {
     [SerializeField] private Transform menu;
-    [SerializeField] private static Inventory _inventory;
 
     private static Dictionary<Key.ResourcePrefs, int> _resources = new Dictionary<Key.ResourcePrefs, int>();
     private static UIResource _ui;
@@ -20,9 +19,7 @@ public class ResourceController : MonoBehaviour
     #region MonoBehaviour
     private void Awake()
     {
-        _inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
         _ui = GetComponent<UIResource>();
-
 
         foreach (Key.ResourcePrefs pref in Enum.GetValues(typeof(Key.ResourcePrefs)))
             _resources.Add(pref, PlayerPrefs.GetInt(pref.ToString(), 0));
@@ -31,7 +28,7 @@ public class ResourceController : MonoBehaviour
     }
     #endregion
 
-    // Build
+    #region Build
     private bool isOpen = false;
     public void OnClickMenu()
     {
@@ -101,15 +98,11 @@ public class ResourceController : MonoBehaviour
     {
         RemoveResource(Key.ResourcePrefs.Gems, Gems);
     }
-    //
+    #endregion
 
     public static void AddResource(Key.ResourcePrefs resourceKey, int value)
     {
         if (value <= 0)
-            return;
-
-        if (((resourceKey != Key.ResourcePrefs.Coins) && (resourceKey != Key.ResourcePrefs.Gems)) 
-            && (!_inventory.Add(value))) 
             return;
 
         int currentAmount = _resources[resourceKey];
@@ -121,11 +114,7 @@ public class ResourceController : MonoBehaviour
 
     public static bool RemoveResource(Key.ResourcePrefs resourceKey, int value)
     {
-        if ((value <= 0) || (_resources[resourceKey] - value <= 0))
-            return false;
-
-        if (((resourceKey != Key.ResourcePrefs.Coins) && (resourceKey != Key.ResourcePrefs.Gems))
-            && (!_inventory.Remove(value)))
+        if ((value <= 0) || (_resources[resourceKey] - value < 0))
             return false;
 
         int currentAmount = _resources[resourceKey];

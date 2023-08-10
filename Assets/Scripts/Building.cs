@@ -17,9 +17,9 @@ public class Building : MonoBehaviour
 
     public void Build()
     {
-        Show();
-
         transform.SetParent(null);
+
+        Show();
         transform.DOScale(_defaultScale * 1.4f, 0.35f).OnComplete(() => transform.DOScale(_defaultScale, 0.3f));
     }
 

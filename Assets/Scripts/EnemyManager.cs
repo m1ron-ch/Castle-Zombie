@@ -54,7 +54,7 @@ public class EnemyManager : MonoBehaviour
     public Enemy GetNearestEnemy(Vector3 position)
     {
         Enemy nearestEnemy = null;
-        float nearestDistance = 5f;
+        float nearestDistance = 7f;
 
         foreach (Enemy enemy in _enemies)
         {

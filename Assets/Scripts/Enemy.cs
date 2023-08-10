@@ -7,7 +7,6 @@ using UnityEngine.AI;
 [RequireComponent (typeof(Animator))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private HealthBar _healthBar;
     [SerializeField] private float _maxHealth = 100;
     [SerializeField] private float _health = 100;
 
@@ -25,14 +24,10 @@ public class Enemy : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();  
         _rg = GetComponent<Rigidbody>();
-
-        _healthBar.SetMaxHealth(_maxHealth);
     }
 
     private void FixedUpdate()
     {
-        return;
-
         if (_target != null)
             _agent.destination = _target.position;
     }
@@ -75,8 +70,6 @@ public class Enemy : MonoBehaviour
             _health -= value;
         else 
             Death();
-
-        _healthBar.SetHealth(value, _health);
     }
 
     public void Death()

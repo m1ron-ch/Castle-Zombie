@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class Tasks : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private void Save()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Load()
     {
-        
+
     }
 }

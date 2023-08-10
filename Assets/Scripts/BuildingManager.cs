@@ -9,10 +9,11 @@ public class BuildingManager : MonoBehaviour
 
     private int _currentBuildingHierarchy;
 
+    private bool _isLastBuildingsHierarchy => _currentBuildingHierarchy > _buildings.Count - 1;
+
     private void Awake()
     {
-/*        ResetJSON();
-        Save();*/
+        ResetJSON();
 
         _currentBuildingHierarchy = PlayerPrefs.GetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
 
@@ -27,6 +28,8 @@ public class BuildingManager : MonoBehaviour
     {
         PlayerPrefs.SetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
         PlayerPrefs.SetString(Key.Prefs.Buldings.ToString(), null);
+
+        Save();
     }
     // 
 
@@ -63,10 +66,10 @@ public class BuildingManager : MonoBehaviour
     {
         string json = PlayerPrefs.GetString(Key.Prefs.Buldings.ToString());
         if (json == "")
-            return;
+            Save();
 
         List<BuildingRowData> buildingsData = JsonConvert.DeserializeObject<List<BuildingRowData>>(json);
-        Debug.Log(json);
+        Debug.Log("Load()\n" + json);
 
         for (int i = 0; i < buildingsData.Count; i++)
         {
@@ -96,6 +99,9 @@ public class BuildingManager : MonoBehaviour
 
     private bool IsAllBuildingsBuildInHierarchy()
     {
+        if (_isLastBuildingsHierarchy)
+            return false;
+
         bool flag = true;
         foreach (BuildingPoint buildingPoint in _buildings[_currentBuildingHierarchy].Buildings)
         {

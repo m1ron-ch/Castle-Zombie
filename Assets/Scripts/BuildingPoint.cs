@@ -56,7 +56,6 @@ public class BuildingPoint : MonoBehaviour
 
     public void Build(bool isLoad = false)
     {
-        // _cost = 0;
         _isBuild = true;
         _building.Build();
 
@@ -87,21 +86,32 @@ public class BuildingPoint : MonoBehaviour
 
     private IEnumerator AddResource()
     {
+        int countResourceComplete = 0;
         while (true)
         {
             if (!_isAddResource)
+            {
+                _buildingManager.Save();
                 yield break;
+            }
 
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(0.1f);
 
             foreach (BuildingPointCost cost in _cost)
             {
                 if ((cost.Cost > 0) && ResourceController.RemoveResource(cost.Resource, _payment))
                 {
                     cost.Cost -= _payment;
-
-                    _buildingManager.Save();
                 }
+
+                if (cost.Cost == 0)
+                    countResourceComplete++;
+            }
+
+            if (countResourceComplete == _cost.Count)
+            {
+                _isAddResource = false;
+                Build();
             }
 
             _ui.RefreshUI(_cost);

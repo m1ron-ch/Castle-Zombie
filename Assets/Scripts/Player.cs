@@ -9,8 +9,10 @@ public class Player : Humanoid
 {
     [SerializeField] private DynamicJoystick _joystick;
     [SerializeField] private EnemyManager _enemyManager;
+
+    [Header("Tools")]
     [SerializeField] private Transform _personalWeapon;
-    [SerializeField] private FollowingCamera _camera;
+    [SerializeField] private Transform _axe;
 
     private enum Status
     {
@@ -35,12 +37,11 @@ public class Player : Humanoid
         _animator = GetComponent<Animator>();
 
         _personalWeapon.gameObject.SetActive(false);
+        _axe.gameObject.SetActive(false);
     }
 
     private void FixedUpdate()
     {
-        //Debug.Log("Status: " + _status);
-        _camera.Following();
         _animator.SetBool(_currentAnimation.ToString(), _joystick.IsTouch);
 
         Vector3 direction = Vector3.forward * _joystick.Vertical + Vector3.right * _joystick.Horizontal;
@@ -63,7 +64,7 @@ public class Player : Humanoid
         {
             _status = _status != Status.Mine ? Status.None : Status.Mine;
             if (_personalWeapon.gameObject.activeInHierarchy)
-                Util.Invoke(this, () => _personalWeapon.gameObject.SetActive(false), 0.2f);
+                Util.Invoke(this, () => _personalWeapon.gameObject.SetActive(false), 0.7f);
 
             _currentAnimation = Key.Animations.Running;
             _animator.SetBool(Key.Animations.PistolIdle.ToString(), false);
@@ -116,6 +117,8 @@ public class Player : Humanoid
             if (!resource.Damage(_damage))
             {
                 StopCoroutine();
+
+                Util.Invoke(this, () => _axe.gameObject.SetActive(false), 1.7f);
                 _status = Status.None;
             }
 
@@ -143,7 +146,7 @@ public class Player : Humanoid
                     {
                         _status = Status.Mine;
                         _resource = other.transform;
-
+                        _axe.gameObject.SetActive(true);
                         // transform.rotation = Quaternion.LookRotation(resource.gameObject.transform.position - transform.position);
                         _attack = StartCoroutine(Attack(resource));
                     }
