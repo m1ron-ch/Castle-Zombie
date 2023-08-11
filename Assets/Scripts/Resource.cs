@@ -31,11 +31,11 @@ public class Resource : MonoBehaviour
             .OnStart(() => AddResource())
             .OnComplete(() => Death());
 
-        transform.DOScale(0.85f, 0.1f)
+        transform.DOScale(0.85f, 0.15f)
             .SetEase(Ease.OutCubic)
             .SetDelay(delay)
-            .OnComplete(() => transform.DOScale(1, 0.3f)
-                                        .SetEase(Ease.OutElastic));
+            .OnComplete(() => transform.DOScale(1, 0.1f)
+                                        .SetEase(Ease.Linear));
 
         _health -= value;
 
