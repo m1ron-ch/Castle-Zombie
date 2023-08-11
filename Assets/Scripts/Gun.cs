@@ -38,6 +38,8 @@ public abstract class Gun : MonoBehaviour
 
     protected virtual void Shoot()
     {
+        SoundManager.Instance.PlayPersonGun();
+
         Bullet bullet = Instantiate(_bullet, Vector3.zero, Quaternion.identity);
         bullet.transform.position = _shootingPoint.transform.position;
         bullet.SetDamage(_bulletDamage);

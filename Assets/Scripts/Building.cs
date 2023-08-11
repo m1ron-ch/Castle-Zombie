@@ -5,7 +5,11 @@ using UnityEngine;
 
 public class Building : MonoBehaviour
 {
+    [SerializeField] private bool _isNecessarilyBuildToNextHierarchy = true;
+
     private Vector3 _defaultScale;
+
+    public bool IsNecessarilyBuildToNextHierarchy => _isNecessarilyBuildToNextHierarchy;
 
     private void Awake()
     {

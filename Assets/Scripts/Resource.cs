@@ -24,11 +24,18 @@ public class Resource : MonoBehaviour
 
     public bool Damage(int value)
     {
+        float delay = 0.5f;
         _chopPositionY -= _choping;
-        transform.DOShakeRotation(0.7f, 10, 5, 10)
-            .SetDelay(0.5f)
+        transform.DOShakeRotation(0.7f, 5, 1, 5)
+            .SetDelay(delay)
             .OnStart(() => AddResource())
             .OnComplete(() => Death());
+
+        transform.DOScale(0.85f, 0.1f)
+            .SetEase(Ease.OutCubic)
+            .SetDelay(delay)
+            .OnComplete(() => transform.DOScale(1, 0.3f)
+                                        .SetEase(Ease.OutElastic));
 
         _health -= value;
 

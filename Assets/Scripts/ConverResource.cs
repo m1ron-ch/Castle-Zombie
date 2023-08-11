@@ -5,6 +5,10 @@ using TMPro;
 
 public class ConverResource : MonoBehaviour
 {
+    [Header("Points")]
+    [SerializeField] private Transform _addPoint;
+    [SerializeField] private Transform _getPoint;
+
     [Header("From")]
     [SerializeField] private Key.ResourcePrefs _from;
     [SerializeField] private TMP_Text _costFromText;

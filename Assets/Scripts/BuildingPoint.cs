@@ -11,8 +11,8 @@ public class BuildingPoint : MonoBehaviour
     [SerializeField] private UIBuildingPoint _ui;
     [SerializeField] private List<BuildingPointCost> _cost = new();
 
+    private Dictionary<Key.ResourcePrefs, int> _payments = new();
     private BuildingManager _buildingManager;
-    private int _payment = 1;
     private bool _isAddResource;
     private bool _isBuild;
 
@@ -51,6 +51,10 @@ public class BuildingPoint : MonoBehaviour
     public void Init(List<BuildingPointCost> buildingPointCost)
     {
         _cost = buildingPointCost;
+
+        foreach (BuildingPointCost cost in _cost)
+            _payments.Add(cost.Resource, (int)Mathf.Round((float)cost.Cost / 10));
+
         _ui.Init(buildingPointCost);
     }
 
@@ -87,6 +91,7 @@ public class BuildingPoint : MonoBehaviour
     private IEnumerator AddResource()
     {
         int countResourceComplete = 0;
+        int payment;
         while (true)
         {
             if (!_isAddResource)
@@ -99,9 +104,11 @@ public class BuildingPoint : MonoBehaviour
 
             foreach (BuildingPointCost cost in _cost)
             {
-                if ((cost.Cost > 0) && ResourceController.RemoveResource(cost.Resource, _payment))
+                payment = cost.Cost > _payments[cost.Resource] ? _payments[cost.Resource] : cost.Cost;
+                if ((cost.Cost > 0) && ResourceController.RemoveResource(cost.Resource, payment))
                 {
-                    cost.Cost -= _payment;
+                    cost.Cost -= payment;
+                    SoundManager.Instance.PlayAddResource();
                 }
 
                 if (cost.Cost == 0)

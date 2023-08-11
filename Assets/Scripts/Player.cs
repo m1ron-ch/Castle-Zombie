@@ -43,6 +43,14 @@ public class Player : Humanoid
     private void FixedUpdate()
     {
         _animator.SetBool(_currentAnimation.ToString(), _joystick.IsTouch);
+        if (_joystick.IsTouch)
+        {
+            SoundManager.Instance.PlayRunning();
+        }
+        else
+        {
+            SoundManager.Instance.StopRunning();
+        }
 
         Vector3 direction = Vector3.forward * _joystick.Vertical + Vector3.right * _joystick.Horizontal;
         _rb.MovePosition(transform.position + direction * _speed * Time.fixedDeltaTime);
@@ -123,6 +131,7 @@ public class Player : Humanoid
             }
 
             _animator.SetTrigger(Key.Animations.Chop.ToString());
+            SoundManager.Instance.PlayChop();
 
             yield return new WaitForSeconds(1f);
         }

@@ -23,7 +23,7 @@ public class BuildingManager : MonoBehaviour
         ShowCurrentBuildings(_currentBuildingHierarchy);
     }
 
-    // TEST 
+    // BUILD VERSION 
     public void ResetJSON()
     {
         PlayerPrefs.SetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
@@ -47,6 +47,7 @@ public class BuildingManager : MonoBehaviour
                 buildingData.Name = building.Building.name;
                 buildingData.IsBuild = building.IsBuild;
                 buildingData.BuildingCost = building.Cost;
+                buildingData.IsNecessarilyBuildToNextHierarchy = building.Building.IsNecessarilyBuildToNextHierarchy;
 
                 rowData.Buildings.Add(buildingData);
             }
@@ -108,6 +109,10 @@ public class BuildingManager : MonoBehaviour
             if (!buildingPoint.IsBuild)
             {
                 buildingPoint.Show();
+            }
+
+            if (buildingPoint.Building.IsNecessarilyBuildToNextHierarchy && !buildingPoint.IsBuild)
+            {
                 flag = false;
             }
         }            
@@ -161,39 +166,6 @@ public class BuildingData
 {
     public string Name;
     public bool IsBuild;
+    public bool IsNecessarilyBuildToNextHierarchy;
     public List<BuildingPointCost> BuildingCost;
 }
-
-/*public class BuildingManager : MonoBehaviour
-{
-    [SerializeField] private List<BuildingRow> _buildings = new();
-
-    private int _currentBuildingHierarchy;
-
-    private void Awake()
-    {
-        _currentBuildingHierarchy = PlayerPrefs.GetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
-
-        HideAllBuildings();
-        ShowCurrentBuildings(_currentBuildingHierarchy);
-    }
-
-    private void ShowCurrentBuildings(int index)
-    {
-        foreach (Building building in _buildings[index].buildings)
-            building.Show();
-    }
-
-    private void HideAllBuildings()
-    {
-        foreach (BuildingRow row in _buildings)
-            foreach (Building building in row.buildings)
-                building.Hide();
-    }
-}
-
-[System.Serializable]
-public class BuildingRow
-{
-    public List<Building> buildings = new();
-}*/
