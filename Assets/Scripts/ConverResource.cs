@@ -7,12 +7,15 @@ using DG.Tweening;
 
 public class ConverResource : MonoBehaviour
 {
+    [SerializeField] private Transform _coinPrefab;
+    [SerializeField] private Transform _coinsParent;
+    [SerializeField] private List<Transform> _coinPoints = new();
+
     [Header("Storage")]
     [SerializeField] private int _capacity = 120;
     [SerializeField] private TMP_Text _storage;
     [SerializeField] private Image _icon;
-
-    private int _currentCapacity;
+    [SerializeField] private Image _fillImage;
 
     [Header("From")]
     [SerializeField] private Key.ResourcePrefs _from;
@@ -24,7 +27,12 @@ public class ConverResource : MonoBehaviour
     [SerializeField] private TMP_Text _costToText;
     [SerializeField] private int _costTo;
 
-    private bool isProcessing = false;
+    private List<Transform> _coins = new();
+    private int _coinPointIndex = 0;
+    private int _currentCapacity;
+    private float _fillDuration = 1;
+    private bool _isProcessing = false;
+    private bool _isConversion = false;
 
     #region MonoBehaviour
     private void Awake()
@@ -58,23 +66,28 @@ public class ConverResource : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        isProcessing = false;
+        _isProcessing = false;
     }
     #endregion
 
     private void HandleResourceTransfer()
     {
-        if (!isProcessing)
+        if (!_isProcessing)
         {
-            isProcessing = true;
-
+            _isProcessing = true;
             StartCoroutine(DelayedResourceTransfer());
+        }
+
+        if (!_isConversion)
+        {
+            _isConversion = true;
+            StartCoroutine(Conversion());
         }
     }
 
     private IEnumerator DelayedResourceTransfer()
     {
-        while (isProcessing)
+        while (_isProcessing)
         {
 
             if (ResourceController.RemoveResource(_from, _costFrom) 
@@ -84,10 +97,66 @@ public class ConverResource : MonoBehaviour
                 _currentCapacity += _costFrom;
                 RefreshUI();
             }
+            else
+            {
+                _isProcessing = false;
+            }
 
             yield return new WaitForSeconds(0.12f);
         }
+    }
 
+    private IEnumerator Conversion()
+    {
+        float timer = 0f;
+        float startFillAmount = 0f;
+        float targetFillAmount = 1f;
+
+        while (timer < _fillDuration)
+        {
+            timer += Time.deltaTime;
+            float fillProgress = timer / _fillDuration;
+
+            float currentFillAmount = Mathf.Lerp(startFillAmount, targetFillAmount, fillProgress);
+
+            _fillImage.fillAmount = currentFillAmount;
+
+            yield return null;
+        }
+
+        _currentCapacity -= _costFrom;
+        AddCoin();
+        RefreshUI();
+
+        if (_currentCapacity > 0)
+        {
+            StartCoroutine(Conversion());
+        }
+        else
+        {
+            targetFillAmount = 0f;
+            _isConversion = false;
+        }
+
+        _fillImage.fillAmount = targetFillAmount;
+    }
+
+    private void AddCoin()
+    {
+        Transform coin = Instantiate(_coinPrefab, _coinPoints[_coinPointIndex]);
+        coin.SetParent(_coinsParent);
+        _coins.Add(coin);
+        _coinPointIndex++;
+
+        if (_coins.Count % _coinPoints.Count == 0)
+        {
+            foreach (Transform point in _coinPoints)
+            {
+                point.transform.position = new Vector3(point.transform.position.x, point.transform.position.y + 0.15f, point.transform.position.z);
+            }
+
+            _coinPointIndex = 0;
+        }
     }
 
     private void RefreshUI()
