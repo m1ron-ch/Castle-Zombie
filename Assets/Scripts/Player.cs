@@ -43,6 +43,8 @@ public class Player : Humanoid
 
     private void FixedUpdate()
     {
+        Debug.Log($"Status: {_status}");
+
         _animator.SetBool(_currentAnimation.ToString(), _joystick.IsTouch);
         if (_joystick.IsTouch)
         {
@@ -104,33 +106,53 @@ public class Player : Humanoid
 
     private void OnTriggerExit(Collider other)
     {
-        _status = Status.None;
-        _resource = null;
-        StopCoroutine();
-
-        if (_currentAnimation == Key.Animations.Chop)
-            _animator.ResetTrigger(_currentAnimation.ToString());
+        if (other.gameObject.TryGetComponent(out ObjectType objectType))
+        {
+            ExitFromAttackResource();
+        }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (_status == Status.None)
-            HandleObjectInteraction(other.gameObject);
+        HandleObjectInteraction(other.gameObject);
     }
     #endregion
+
+    private void HandleObjectInteraction(GameObject other)
+    {
+        if (IsMove || (_status == Status.Attack) || (_resource != null))
+            return;
+
+        if (other.gameObject.TryGetComponent(out ObjectType objectType))
+        {
+            switch (objectType.Type)
+            {
+                case Key.ObjectType.Tree:
+                case Key.ObjectType.Rock:
+                    if (other.TryGetComponent(out Resource resource))
+                    {
+                        _status = Status.Mine;
+                        _resource = other.transform;
+                        ShowObject(_axe);
+
+                        _attack = StartCoroutine(Attack(resource));
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     private IEnumerator Attack(Resource resource)
     {
         while (true)
         {
-            if (!resource.Damage(_damage))
+            if (!resource.Damage(_damage) || IsMove)
             {
-                StopCoroutine();
-
-                Util.Invoke(this, () => _axe.gameObject.SetActive(false), 1.7f);
-                _status = Status.None;
-                if (_currentAnimation == Key.Animations.Chop)
-                    _animator.ResetTrigger(_currentAnimation.ToString());
+                ExitFromAttackResource();
+                yield break;
             }
 
             _animator.SetTrigger(Key.Animations.Chop.ToString());
@@ -140,42 +162,33 @@ public class Player : Humanoid
         }
     }
 
-    private void HandleObjectInteraction(GameObject other)
-    {
-        if (_joystick.IsTouch)
-            return;
-
-        if (other.gameObject.TryGetComponent(out ObjectType objectType))
-        {
-            switch (objectType.Type)
-            {
-                case Key.ObjectType.Tree:
-                case Key.ObjectType.Rock:
-                    if ((_resource == other.transform) || (_status == Status.Attack))
-                        return;
-
-                    if (other.TryGetComponent(out Resource resource))
-                    {
-                        _status = Status.Mine;
-                        _resource = other.transform;
-                        _axe.gameObject.SetActive(true);
-                        // transform.rotation = Quaternion.LookRotation(resource.gameObject.transform.position - transform.position);
-                        _attack = StartCoroutine(Attack(resource));
-                    }
-                    break;
-                case Key.ObjectType.MachineGun:
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
 
     private void StopCoroutine()
     {
         if (_attack != null)
             StopCoroutine(_attack);
+    }
+
+    private void ExitFromAttackResource()
+    {
+        StopCoroutine();
+
+        _status = Status.None;
+        _resource = null;
+
+        Util.Invoke(this, () => HideObject(_axe), 1.7f);
+        if (_currentAnimation == Key.Animations.Chop)
+            _animator.ResetTrigger(_currentAnimation.ToString());
+    }
+
+    private void ShowObject(Transform obj)
+    {
+        obj.gameObject.SetActive(true);
+    }
+
+    private void HideObject(Transform obj)
+    {
+        obj.gameObject.SetActive(false);
     }
 
     public override void Freeze()

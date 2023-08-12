@@ -21,6 +21,12 @@ public class Resource : MonoBehaviour
 
     public bool Damage(int value)
     {
+        if (_health <= 0)
+        {
+            _collider.enabled = false;
+            return false;
+        }
+
         float delay = 0.5f;
         transform.DOShakeRotation(0.7f, 5, 1, 5)
             .SetDelay(delay)
@@ -34,8 +40,7 @@ public class Resource : MonoBehaviour
                                         .SetEase(Ease.Linear));
 
         _health -= value;
-
-        return _health > 0;
+        return true;
     }
 
     private void AddResource()
