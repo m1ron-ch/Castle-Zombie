@@ -9,6 +9,7 @@ public class Player : Humanoid
 {
     [SerializeField] private DynamicJoystick _joystick;
     [SerializeField] private EnemyManager _enemyManager;
+    [SerializeField] private UIFloatingText _text;
 
     [Header("Tools")]
     [SerializeField] private Transform _personalWeapon;
@@ -128,6 +129,8 @@ public class Player : Humanoid
 
                 Util.Invoke(this, () => _axe.gameObject.SetActive(false), 1.7f);
                 _status = Status.None;
+                if (_currentAnimation == Key.Animations.Chop)
+                    _animator.ResetTrigger(_currentAnimation.ToString());
             }
 
             _animator.SetTrigger(Key.Animations.Chop.ToString());

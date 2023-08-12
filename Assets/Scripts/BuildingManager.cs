@@ -11,7 +11,7 @@ public class BuildingManager : MonoBehaviour
 
     private bool _isLastBuildingsHierarchy => _currentBuildingHierarchy > _buildings.Count - 1;
 
-    private void Awake()
+    private void Start()
     {
         ResetJSON();
 
@@ -118,9 +118,11 @@ public class BuildingManager : MonoBehaviour
         }            
 
         if (flag)
+        {
             NextBuildingHierarchy();
+            ShowCurrentBuildings(_currentBuildingHierarchy);
+        }
 
-        ShowCurrentBuildings(_currentBuildingHierarchy);
 
         return flag;
     }
@@ -131,7 +133,7 @@ public class BuildingManager : MonoBehaviour
             return;
 
         foreach (BuildingPoint building in _buildings[index].Buildings)
-            building.Show();
+                building.Show();
     }
 
     private void HideAllBuildings()

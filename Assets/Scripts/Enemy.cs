@@ -28,8 +28,14 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_target != null)
-            _agent.destination = _target.position;
+        if ((_target != null) && (Vector3.Distance(transform.position, _target.position) < 7))
+        {
+            MoveToTarget();
+        }
+        else
+        {
+            Stop();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -41,9 +47,15 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void MoveTo(Transform target)
+    public void SetTarget(Transform target)
     {
         _target = target;
+    }
+
+    public void MoveToTarget()
+    {
+        _agent.destination = _target.position;
+        _agent.isStopped = false;
         _animator.SetBool(Key.Animations.Walking.ToString(), true);
     }
 
@@ -53,8 +65,14 @@ public class Enemy : MonoBehaviour
         _animator.SetBool(Key.Animations.Walking.ToString(), false);
     }
 
+    public void Wait()
+    {
+
+    }
+
     public void Health(float value)
     {
+        return;
         if (_health + value >= _maxHealth) _health = _maxHealth;
         else _health += value;
     }

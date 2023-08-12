@@ -2,12 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class ConverResource : MonoBehaviour
 {
-    [Header("Points")]
-    [SerializeField] private Transform _addPoint;
-    [SerializeField] private Transform _getPoint;
+    [Header("Storage")]
+    [SerializeField] private int _capacity = 120;
+    [SerializeField] private TMP_Text _storage;
+    [SerializeField] private Image _icon;
+
+    private int _currentCapacity;
 
     [Header("From")]
     [SerializeField] private Key.ResourcePrefs _from;
@@ -26,6 +31,13 @@ public class ConverResource : MonoBehaviour
     {
         _costFromText.text = _costFrom.ToString();
         _costToText.text = _costTo.ToString();
+
+        RefreshUI();
+    }
+
+    private void Start()
+    {
+        _icon.sprite = Sprite.Instance.GetSprite(_from);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -65,11 +77,27 @@ public class ConverResource : MonoBehaviour
         while (isProcessing)
         {
 
-            if (ResourceController.RemoveResource(_from, _costFrom))
-                ResourceController.AddResource(_to, _costTo);
+            if (ResourceController.RemoveResource(_from, _costFrom) 
+                && (_currentCapacity + _costFrom <= _capacity))
+            {
+                SoundManager.Instance.PlayAddResource();
+                _currentCapacity += _costFrom;
+                RefreshUI();
+            }
 
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.12f);
         }
 
+    }
+
+    private void RefreshUI()
+    {
+        _storage.text = $"{_currentCapacity} / {_capacity}";
+        Resize(_icon.transform);
+    }
+
+    private void Resize(Transform obj)
+    {
+        obj.DOScale(1.15f, 0.2f).OnComplete(() => obj.DOScale(1f, 0.1f));
     }
 }

@@ -7,8 +7,6 @@ public class UIBuildingPoint : MonoBehaviour
 {
     [SerializeField] private UIResourceContent _resource;
     [SerializeField] private Transform _instantiatePoint;
-    [SerializeField] private Sprite _sprite;
-
 
     private List<BuildingPointCost> _buildingCost = new();
     private List<UIResourceContent> _buildingResources = new();
@@ -42,7 +40,7 @@ public class UIBuildingPoint : MonoBehaviour
         foreach (BuildingPointCost buildCost in _buildingCost)
         {
             UIResourceContent content = Instantiate(_resource, _instantiatePoint);
-            content.Init(buildCost.Resource, buildCost.Cost, _sprite.GetSprite(buildCost.Resource));
+            content.Init(buildCost.Resource, buildCost.Cost, Sprite.Instance.GetSprite(buildCost.Resource));
 
             _buildingResources.Add(content);
         }

@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 public class UIResource : MonoBehaviour
 {
-    [SerializeField] private Sprite _sprite;
-
     [Header("Coins")]
     [SerializeField] private Image _coinsImage;
     [SerializeField] private TMP_Text _coins;
@@ -28,10 +26,10 @@ public class UIResource : MonoBehaviour
     #region MonoBehaviour
     private void Awake()
     {
-        _coinsImage.sprite = _sprite.Coins;
-        _gemsImage.sprite = _sprite.Gems;
-        _rocksImage.sprite = _sprite.Rock;
-        _woodImage.sprite = _sprite.Wood;
+        _coinsImage.sprite = Sprite.Instance.Coins;
+        _gemsImage.sprite = Sprite.Instance.Gems;
+        _rocksImage.sprite = Sprite.Instance.Rock;
+        _woodImage.sprite = Sprite.Instance.Wood;
     }
     #endregion
 

@@ -7,6 +7,7 @@ using UnityEngine;
 public class ResourceController : MonoBehaviour
 {
     [SerializeField] private Transform menu;
+    [SerializeField] private UIFloatingText _text;
 
     private static Dictionary<Key.ResourcePrefs, int> _resources = new Dictionary<Key.ResourcePrefs, int>();
     private static UIResource _ui;
@@ -108,6 +109,7 @@ public class ResourceController : MonoBehaviour
         int currentAmount = _resources[resourceKey];
         _resources[resourceKey] = currentAmount + value;
         _ui.RefreshUI(resourceKey, _resources[resourceKey]);
+        ShowFloatingText(resourceKey, value);
 
         SaveResource(resourceKey, _resources[resourceKey]);
     }
@@ -130,6 +132,16 @@ public class ResourceController : MonoBehaviour
     {
         foreach (KeyValuePair<Key.ResourcePrefs, int> res in _resources)
             _ui.RefreshUI(res.Key, res.Value);
+    }
+
+    private static void ShowFloatingText(Key.ResourcePrefs resource, int value)
+    {
+        Vector3 playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
+        GameObject text = Instantiate(Resources.Load("FloatingText"), Vector3.zero, Quaternion.identity) as GameObject;
+        if (text.TryGetComponent(out UIFloatingText ui))
+        {
+            ui.ShowText(playerPosition, value, Sprite.Instance.GetSprite(resource));
+        }
     }
 
     private static void SaveResource(Key.ResourcePrefs resourceKey, int value)

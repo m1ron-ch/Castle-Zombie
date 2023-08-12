@@ -8,24 +8,20 @@ public class Resource : MonoBehaviour
 {
     private ObjectType _objectType;
     private int _health = 50;
-    private Vector3 _defaultRotation;
     private Collider _collider;
-    float _chopPositionY = 0;
-    float _choping;
+    private int _defaultHealth;
 
-    private void Start()
+    private void Awake()
     {
         _objectType = GetComponent<ObjectType>();
-        _defaultRotation = transform.rotation.eulerAngles;
         _collider = GetComponent<Collider>();
 
-        _choping = _collider.bounds.extents.z / 2f;
+        _defaultHealth = _health;
     }
 
     public bool Damage(int value)
     {
         float delay = 0.5f;
-        _chopPositionY -= _choping;
         transform.DOShakeRotation(0.7f, 5, 1, 5)
             .SetDelay(delay)
             .OnStart(() => AddResource())
@@ -47,10 +43,10 @@ public class Resource : MonoBehaviour
         switch (_objectType.Type)
         {
             case Key.ObjectType.Tree:
-                ResourceController.AddResource(Key.ResourcePrefs.Wood, 10);
+                ResourceController.AddResource(Key.ResourcePrefs.Wood, 3);
                 break;
             case Key.ObjectType.Rock:
-                ResourceController.AddResource(Key.ResourcePrefs.Rock, 5);
+                ResourceController.AddResource(Key.ResourcePrefs.Rock, 2);
                 break;
         }
     }
@@ -63,7 +59,15 @@ public class Resource : MonoBehaviour
         transform.DOMoveY(-7, 2)
             .SetDelay(0.5f)
             .OnStart(() => _collider.enabled = false)
-            .OnComplete(() => transform.gameObject.SetActive(false));
+            .OnComplete(() => Util.Invoke(this, () => Restart(), 1));
     }
 
+    private void Restart()
+    {
+        _collider.enabled = true;
+        transform.gameObject.SetActive(true);
+        _health = _defaultHealth;
+
+        transform.DOMoveY(0, 1.7f);
+    }
 }

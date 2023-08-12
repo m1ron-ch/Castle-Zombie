@@ -53,7 +53,10 @@ public class BuildingPoint : MonoBehaviour
         _cost = buildingPointCost;
 
         foreach (BuildingPointCost cost in _cost)
-            _payments.Add(cost.Resource, (int)Mathf.Round((float)cost.Cost / 10));
+        {
+            int payment = (int)Mathf.Round((float)cost.Cost / 10);
+            _payments.Add(cost.Resource, payment < 1 ? 1 : payment);
+        }
 
         _ui.Init(buildingPointCost);
     }

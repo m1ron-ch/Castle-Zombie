@@ -2,20 +2,28 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Mat2
   m_Shader: {fileID: 4800000, guid: 128c5f1edaefa4c4fb3f9f7a4615edb2, type: 3}
-  m_ShaderKeywords: _RIMLIMIT_ON _RIMOVERLAP_ON _SEGMENTED_ON _SPCOVERLAP_ON
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _RIMLIMIT_ON
+  - _RIMOVERLAP_ON
+  - _SEGMENTED_ON
+  - _SPCOVERLAP_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -85,7 +93,7 @@ Material:
     - _RimSmooth: 1
     - _RimTolerc: 1
     - _Segmented: 1
-    - _ShnIntense: 0.244
+    - _ShnIntense: 1
     - _ShnOverlap: 0
     - _ShnRange: 0.258
     - _ShnSmooth: 1
@@ -102,12 +110,12 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.58740497, g: 1, b: 0.3254717, a: 1}
+    - _Color: {r: 0.5733555, g: 0.754717, b: 0.28835887, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MaxColor: {r: 0, g: 0.76902664, b: 0.8113208, a: 1}
     - _MinColor: {r: 0, g: 0, b: 0, a: 1}
     - _OtlColor: {r: 0.1882353, g: 0.1781615, b: 0.078431375, a: 1}
     - _RimColor: {r: 1, g: 0.9904847, b: 0.8160377, a: 1}
-    - _ShnColor: {r: 0.9406834, g: 1, b: 0.7294118, a: 1}
+    - _ShnColor: {r: 0.7843137, g: 1, b: 0, a: 1}
     - _SpcColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

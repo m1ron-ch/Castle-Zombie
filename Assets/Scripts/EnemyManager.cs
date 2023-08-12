@@ -45,16 +45,17 @@ public class EnemyManager : MonoBehaviour
     public void SpawnEnemy(Vector3 position)
     {
         Enemy enemy = Instantiate(_enemyPrefab, position, Quaternion.identity);
-        enemy.MoveTo(_player.transform);
+        enemy.SetTarget(_player.transform);
         _enemies.Add(enemy);
-        // enemy.MoveTo(_gameManager.RoomManager.Rooms[Random.Range(0, _gameManager.RoomManager.Rooms.Count)].Door.transform.position);
-        //enemy.Stop();
     }
 
     public Enemy GetNearestEnemy(Vector3 position)
     {
         Enemy nearestEnemy = null;
-        float nearestDistance = 7f;
+        float nearestDistance;
+
+        Vector3 screenPosition = Camera.main.WorldToViewportPoint(transform.position);
+        nearestDistance = screenPosition.x < 0 || screenPosition.x > 1 || screenPosition.y < 0 || screenPosition.y > 1 ? 4 : 7;
 
         foreach (Enemy enemy in _enemies)
         {

@@ -52,8 +52,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayChop()
     {
-        if (!_chopSource.isPlaying)
-            _chopSource.Play();
+        _chopSource.Play();
     }
 
     public void PlayAddResource()
