@@ -9,7 +9,8 @@ public class Player : Humanoid
 {
     [SerializeField] private DynamicJoystick _joystick;
     [SerializeField] private EnemyManager _enemyManager;
-    [SerializeField] private UIFloatingText _text;
+    [SerializeField] private Transform _dustPrefab;
+    [SerializeField] private Transform _dustInstatiatePoint;
 
     [Header("Tools")]
     [SerializeField] private Transform _personalWeapon;
@@ -28,6 +29,7 @@ public class Player : Humanoid
     private Coroutine _attack;
     private float _speed = 5;
     private int _damage = 10;
+    private bool _isDust = false;
 
     public bool IsMove => _joystick.IsTouch;
 
@@ -83,6 +85,16 @@ public class Player : Humanoid
             _animator.SetBool(Key.Animations.Idle.ToString(), true);
         }
         #endregion
+
+        if (direction != Vector3.zero)
+        {
+            if (!_isDust)
+                StartCoroutine(DustEmitter());
+        }
+        else
+        {
+            _isDust = false;
+        }
 
         Vector3 rotation = transform.rotation.eulerAngles;
         Vector3 relativePos = transform.position;
@@ -162,6 +174,31 @@ public class Player : Humanoid
         }
     }
 
+    private IEnumerator DustEmitter()
+    {
+        _isDust = true;
+
+        while (_isDust)
+        {
+            yield return new WaitForSeconds(0.1f);
+
+            Vector3 playerPosition = _dustInstatiatePoint.position;
+            float randomOffset = Random.Range(-0.5f, 0.5f);
+            Vector3 spawnPosition = new Vector3(playerPosition.x + randomOffset, playerPosition.y, playerPosition.z);
+
+            float scale = Random.Range(0.7f, 1.3f);
+            Transform dust = Instantiate(_dustPrefab, spawnPosition, Quaternion.identity);
+            dust.localScale *= scale;
+            StartCoroutine(DestroyAfterDelay(dust.gameObject, 0.4f));
+        }
+    }
+
+    private IEnumerator DestroyAfterDelay(GameObject target, float delay)
+    {
+        target.transform.DOScale(0, 0.6f).SetDelay(0.2f);
+        yield return new WaitForSeconds(delay);
+        Destroy(target);
+    }
 
     private void StopCoroutine()
     {

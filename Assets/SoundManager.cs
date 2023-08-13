@@ -8,6 +8,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource _personGunSource;
     [SerializeField] private AudioSource _chopSource;
     [SerializeField] private AudioSource _addResource;
+    [SerializeField] private AudioSource _takeResource;
 
     private static SoundManager s_instance;
 
@@ -59,6 +60,11 @@ public class SoundManager : MonoBehaviour
     {
         if (!_addResource.isPlaying)
             _addResource.Play();
+    }
+
+    public void PlayTakeResource()
+    {
+        _takeResource.Play();
     }
 
     #endregion

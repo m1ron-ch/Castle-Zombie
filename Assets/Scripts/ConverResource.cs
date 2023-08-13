@@ -7,9 +7,7 @@ using DG.Tweening;
 
 public class ConverResource : MonoBehaviour
 {
-    [SerializeField] private Transform _coinPrefab;
-    [SerializeField] private Transform _coinsParent;
-    [SerializeField] private List<Transform> _coinPoints = new();
+    [SerializeField] private ResourceStorage _resourceStorage;
 
     [Header("Storage")]
     [SerializeField] private int _capacity = 120;
@@ -19,16 +17,12 @@ public class ConverResource : MonoBehaviour
 
     [Header("From")]
     [SerializeField] private Key.ResourcePrefs _from;
-    [SerializeField] private TMP_Text _costFromText;
     [SerializeField] private int _costFrom;
 
     [Header("To")]
     [SerializeField] private Key.ResourcePrefs _to;
-    [SerializeField] private TMP_Text _costToText;
     [SerializeField] private int _costTo;
 
-    private List<Transform> _coins = new();
-    private int _coinPointIndex = 0;
     private int _currentCapacity;
     private float _fillDuration = 1;
     private bool _isProcessing = false;
@@ -37,9 +31,7 @@ public class ConverResource : MonoBehaviour
     #region MonoBehaviour
     private void Awake()
     {
-        _costFromText.text = _costFrom.ToString();
-        _costToText.text = _costTo.ToString();
-
+        _resourceStorage.Init(_to, _costTo);
         RefreshUI();
     }
 
@@ -77,12 +69,6 @@ public class ConverResource : MonoBehaviour
             _isProcessing = true;
             StartCoroutine(DelayedResourceTransfer());
         }
-
-        if (!_isConversion)
-        {
-            _isConversion = true;
-            StartCoroutine(Conversion());
-        }
     }
 
     private IEnumerator DelayedResourceTransfer()
@@ -93,6 +79,12 @@ public class ConverResource : MonoBehaviour
             if (ResourceController.RemoveResource(_from, _costFrom) 
                 && (_currentCapacity + _costFrom <= _capacity))
             {
+                if (!_isConversion)
+                {
+                    _isConversion = true;
+                    StartCoroutine(Conversion());
+                }
+
                 SoundManager.Instance.PlayAddResource();
                 _currentCapacity += _costFrom;
                 RefreshUI();
@@ -125,7 +117,7 @@ public class ConverResource : MonoBehaviour
         }
 
         _currentCapacity -= _costFrom;
-        AddCoin();
+        _resourceStorage.AddResource();
         RefreshUI();
 
         if (_currentCapacity > 0)
@@ -139,24 +131,6 @@ public class ConverResource : MonoBehaviour
         }
 
         _fillImage.fillAmount = targetFillAmount;
-    }
-
-    private void AddCoin()
-    {
-        Transform coin = Instantiate(_coinPrefab, _coinPoints[_coinPointIndex]);
-        coin.SetParent(_coinsParent);
-        _coins.Add(coin);
-        _coinPointIndex++;
-
-        if (_coins.Count % _coinPoints.Count == 0)
-        {
-            foreach (Transform point in _coinPoints)
-            {
-                point.transform.position = new Vector3(point.transform.position.x, point.transform.position.y + 0.15f, point.transform.position.z);
-            }
-
-            _coinPointIndex = 0;
-        }
     }
 
     private void RefreshUI()
