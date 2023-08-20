@@ -37,6 +37,8 @@ public class ResourceStorage : MonoBehaviour
     public void AddResource()
     {
         Transform coin = Instantiate(_resourcePrefab, _resourcesPoins[_resourcePointIndex]);
+        coin.transform.position += new Vector3(0, 5, 0);
+        coin.DOMove(_resourcesPoins[_resourcePointIndex].position, 0.2f);
         coin.SetParent(transform);
         _resources.Add(coin);
         _resourcePointIndex++;
@@ -57,9 +59,8 @@ public class ResourceStorage : MonoBehaviour
         if (_resources.Count == 0)
             return;
 
-        Vector3 jumpPosition = player.position;
         foreach (Transform resource in _resources)
-            resource.transform.DOJump(jumpPosition, 2, 1, 0.5f)
+            resource.transform.DOJump(transform.position, 2, 1, 0.4f)
                 .OnComplete(() => Destroy(resource.gameObject));
 
         ResourceController.AddResource(_resourceKey, _valueOneResource * _resources.Count);

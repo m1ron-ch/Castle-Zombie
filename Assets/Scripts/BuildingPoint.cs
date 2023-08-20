@@ -15,6 +15,7 @@ public class BuildingPoint : MonoBehaviour
     private BuildingManager _buildingManager;
     private bool _isAddResource;
     private bool _isBuild;
+    private bool _isCage;
 
     public Building Building => _building;
     public List<BuildingPointCost> Cost => _cost;
@@ -25,7 +26,22 @@ public class BuildingPoint : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            IsAtPoint(player.IsMove);
+            if (_building.TryGetComponent(out CagePrologBuilding cage))
+            {
+                if (!_isCage)
+                {
+                    _isCage = true;
+                    _isBuild = true;
+
+                    cage.Build();
+                    _buildingManager.Save();
+                    Destroy(gameObject);
+                }
+            }
+            else
+            {
+                IsAtPoint(player.IsMove);
+            }
         }
     }
 
@@ -38,7 +54,25 @@ public class BuildingPoint : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            IsAtPoint(player.IsMove);
+            if (_building.TryGetComponent(out CagePrologBuilding cage))
+            {
+                Debug.Log("CagePrologBuilding");
+                if (!_isCage)
+                {
+                    _isCage = true;
+                    _isBuild = true;
+
+                    cage.Build();
+                    _buildingManager.Save();
+                    Hide();
+                    //Destroy(gameObject);
+                }
+            }
+            else
+            {
+                Debug.Log("Building");
+                IsAtPoint(player.IsMove);
+            }
         }
     }
     #endregion
@@ -63,13 +97,16 @@ public class BuildingPoint : MonoBehaviour
 
     public void Build(bool isLoad = false)
     {
+        TaskController.Instance.CompleteTask(TaskType.BuildStructure, _building);
+
         _isBuild = true;
         _building.Build();
 
         if (!isLoad)
             _buildingManager.Save();
 
-        Destroy(gameObject);
+        Hide();
+        //Destroy(gameObject);
     }
 
     public void Show()
@@ -93,10 +130,9 @@ public class BuildingPoint : MonoBehaviour
 
     private IEnumerator AddResource()
     {
-        int countResourceComplete = 0;
-        int payment;
         while (true)
         {
+            int countResourceComplete = 0;
             if (!_isAddResource)
             {
                 _buildingManager.Save();
@@ -107,7 +143,7 @@ public class BuildingPoint : MonoBehaviour
 
             foreach (BuildingPointCost cost in _cost)
             {
-                payment = cost.Cost > _payments[cost.Resource] ? _payments[cost.Resource] : cost.Cost;
+                int payment = cost.Cost > _payments[cost.Resource] ? _payments[cost.Resource] : cost.Cost;
                 if ((cost.Cost > 0) && ResourceController.RemoveResource(cost.Resource, payment))
                 {
                     cost.Cost -= payment;

@@ -9,7 +9,27 @@ public class BuildingManager : MonoBehaviour
 
     private int _currentBuildingHierarchy;
 
+    private static BuildingManager s_instance;
     private bool _isLastBuildingsHierarchy => _currentBuildingHierarchy > _buildings.Count - 1;
+
+    public List<BuildingRow> BuildingRows => _buildings;
+    public static BuildingManager Instance => s_instance;
+
+    #region MonoBehaviour
+    private void Awake()
+    {
+        if (s_instance == null)
+        {
+            s_instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
 
     private void Start()
     {
@@ -22,6 +42,7 @@ public class BuildingManager : MonoBehaviour
         Load();
         ShowCurrentBuildings(_currentBuildingHierarchy);
     }
+    #endregion
 
     // BUILD VERSION 
     public void ResetJSON()
@@ -41,7 +62,7 @@ public class BuildingManager : MonoBehaviour
             BuildingRowData rowData = new BuildingRowData();
             rowData.Buildings = new List<BuildingData>();
 
-            foreach (BuildingPoint building in row.Buildings)
+            foreach (BuildingPoint building in row.BuildingPoints)
             {
                 BuildingData buildingData = new BuildingData();
                 buildingData.Name = building.Building.name;
@@ -59,27 +80,28 @@ public class BuildingManager : MonoBehaviour
         PlayerPrefs.SetString(Key.Prefs.Buldings.ToString(), json);
 
         IsAllBuildingsBuildInHierarchy();
-
-        Debug.Log(json);
     }
 
     private void Load()
     {
         string json = PlayerPrefs.GetString(Key.Prefs.Buldings.ToString());
         if (json == "")
+        {
             Save();
+            return;
+        }
 
         List<BuildingRowData> buildingsData = JsonConvert.DeserializeObject<List<BuildingRowData>>(json);
-        Debug.Log("Load()\n" + json);
+        Debug.Log("Buildings Load()\n" + json);
 
         for (int i = 0; i < buildingsData.Count; i++)
         {
             for (int j = 0; j < buildingsData[i].Buildings.Count; j++)
             {
-                _buildings[i].Buildings[j].Init(buildingsData[i].Buildings[j].BuildingCost);
+                _buildings[i].BuildingPoints[j].Init(buildingsData[i].Buildings[j].BuildingCost);
                 if (buildingsData[i].Buildings[j].IsBuild)
                 {
-                    _buildings[i].Buildings[j].Build(true);
+                    _buildings[i].BuildingPoints[j].Build(true);
                 }
             }
         }
@@ -91,7 +113,7 @@ public class BuildingManager : MonoBehaviour
     {
         foreach (BuildingRow row in _buildings)
         {
-            foreach (BuildingPoint building in row.Buildings)
+            foreach (BuildingPoint building in row.BuildingPoints)
             {
                 building.Init(this);
             }
@@ -104,7 +126,7 @@ public class BuildingManager : MonoBehaviour
             return false;
 
         bool flag = true;
-        foreach (BuildingPoint buildingPoint in _buildings[_currentBuildingHierarchy].Buildings)
+        foreach (BuildingPoint buildingPoint in _buildings[_currentBuildingHierarchy].BuildingPoints)
         {
             if (!buildingPoint.IsBuild)
             {
@@ -115,7 +137,7 @@ public class BuildingManager : MonoBehaviour
             {
                 flag = false;
             }
-        }            
+        }
 
         if (flag)
         {
@@ -130,16 +152,20 @@ public class BuildingManager : MonoBehaviour
     private void ShowCurrentBuildings(int index)
     {
         if (_currentBuildingHierarchy > _buildings.Count - 1)
+        {
             return;
+        }
 
-        foreach (BuildingPoint building in _buildings[index].Buildings)
-                building.Show();
+        foreach (BuildingPoint buildingPoint in _buildings[index].BuildingPoints)
+        {
+            buildingPoint.Show();
+        }
     }
 
     private void HideAllBuildings()
     {
         foreach (BuildingRow row in _buildings)
-            foreach (BuildingPoint building in row.Buildings)
+            foreach (BuildingPoint building in row.BuildingPoints)
                 building.Hide();
     }
 
@@ -154,7 +180,7 @@ public class BuildingManager : MonoBehaviour
 [System.Serializable]
 public class BuildingRow
 {
-    public List<BuildingPoint> Buildings = new();
+    public List<BuildingPoint> BuildingPoints = new();
 }
 
 [System.Serializable]

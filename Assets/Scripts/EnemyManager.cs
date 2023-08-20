@@ -12,22 +12,35 @@ public class EnemyManager : MonoBehaviour
     [Header("Spawn Points For Enemy")]
     [SerializeField] private List<Transform> _spawPoints;
 
-    private GameManager _gameManager;
+    private static EnemyManager s_instance;
     private static List<Enemy> _enemies = new List<Enemy>();
     private float _nearestDistance = 10;
     private bool _isSpawning;
 
     public static List<Enemy> Enemies => _enemies;
+    public static EnemyManager Instance => s_instance;
 
-    public void Init(GameManager gameManager)
+    #region
+    private void Awake()
     {
-        _gameManager = gameManager;
+        if (s_instance == null)
+        {
+            s_instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
         StartSpaw();
     }
+    #endregion
 
     public void StartSpaw()
     {
@@ -49,6 +62,25 @@ public class EnemyManager : MonoBehaviour
         _enemies.Add(enemy);
     }
 
+    public Enemy GetNearestEnemy()
+    {
+        Enemy nearestEnemy = null;
+        float nearestDistance = float.MaxValue;
+
+        foreach (Enemy enemy in _enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance < nearestDistance)
+            {
+                nearestEnemy = enemy;
+                nearestDistance = distance;
+            }
+        }
+
+        return nearestEnemy;
+    }
+
+
     public Enemy GetNearestEnemy(Vector3 position)
     {
         Enemy nearestEnemy = null;
@@ -64,6 +96,14 @@ public class EnemyManager : MonoBehaviour
             {
                 nearestEnemy = enemy;
                 nearestDistance = distance;
+            }
+        }
+
+        if (TaskController.Instance.Task.Type == TaskType.DestroyEnemies)
+        {
+            if (nearestDistance < _nearestDistance && nearestEnemy != null)
+            {
+                PointerHelper.Instance.SetTarget(nearestEnemy.transform);
             }
         }
 

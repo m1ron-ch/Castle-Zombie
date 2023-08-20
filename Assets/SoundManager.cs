@@ -47,7 +47,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayPersonGun()
     {
-        if (!_personGunSource.isPlaying)
+/*        if (!_personGunSource.isPlaying)*/
             _personGunSource.Play();
     }
 

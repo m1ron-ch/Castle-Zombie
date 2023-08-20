@@ -798,9 +798,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe78d229159c7df42b5768468250ee54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthBar: {fileID: 6949399089415484258}
-  _maxHealth: 20
-  _health: 20
+  _maxHealth: 19
+  _health: 19
 --- !u!95 &8577064353304735744
 Animator:
   serializedVersion: 7
@@ -854,7 +853,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.005
-  m_Speed: 3
+  m_Speed: 4
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 360
@@ -1211,15 +1210,3 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 744551385152345139}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6949399089415484258 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7648260249648867153, guid: b43631708bf5daf4c84c15d8da97198f,
-    type: 3}
-  m_PrefabInstance: {fileID: 744551385152345139}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4a211306c4a93f42b596885606fbbf3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

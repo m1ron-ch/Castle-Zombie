@@ -63,6 +63,7 @@ public class Enemy : MonoBehaviour
     {
         _agent.isStopped = true;
         _animator.SetBool(Key.Animations.Walking.ToString(), false);
+        _animator.SetBool(Key.Animations.Idle.ToString(), false);
     }
 
     public void Wait()
@@ -72,7 +73,6 @@ public class Enemy : MonoBehaviour
 
     public void Health(float value)
     {
-        return;
         if (_health + value >= _maxHealth) _health = _maxHealth;
         else _health += value;
     }
@@ -92,7 +92,20 @@ public class Enemy : MonoBehaviour
 
     public void Death()
     {
+        _target = null;
+        transform.GetComponent<BoxCollider>().enabled = false;
+
+        Stop();
+        _animator.SetTrigger(Key.Animations.Death.ToString());
+
+        TaskController.Instance.CompleteTask(TaskType.DestroyEnemies, 1);
+        if (TaskController.Instance.Task.Type == TaskType.DestroyEnemies)
+        {
+            Transform nextTarget = EnemyManager.Instance.GetNearestEnemy().transform;
+            PointerHelper.Instance.SetTarget(nextTarget);
+        }
+
         EnemyManager.Enemies.Remove(this);
-        Destroy(gameObject);
+        Util.Invoke(this, () => Destroy(gameObject), 2);
     }
 }

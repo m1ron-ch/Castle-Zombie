@@ -8,7 +8,6 @@ using UnityEngine;
 public class Player : Humanoid
 {
     [SerializeField] private DynamicJoystick _joystick;
-    [SerializeField] private EnemyManager _enemyManager;
     [SerializeField] private Transform _dustPrefab;
     [SerializeField] private Transform _dustInstatiatePoint;
 
@@ -61,7 +60,7 @@ public class Player : Humanoid
         _rb.MovePosition(transform.position + direction * _speed * Time.fixedDeltaTime);
 
         #region переделать
-        Enemy enemy = _enemyManager.GetNearestEnemy(transform.position);
+        Enemy enemy = EnemyManager.Instance.GetNearestEnemy(transform.position);
         if (enemy != null)
         {
             _status = Status.Attack;

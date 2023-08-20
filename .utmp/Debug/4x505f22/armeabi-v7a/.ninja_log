@@ -1,3 +1,5 @@
 # ninja log v5
-1	194	7131353002640694	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	68af853e9eac816a
-195	309	7131353003502275	C:/Users/miron/Documents/GitHub/Castle-Zombie/Library/PramData/AndroidApplicationController/Cache/com.DefaultCompany.CastleZombie/gradle-project/unityLibrary/build/intermediates/cxx/Debug/4x505f22/obj/armeabi-v7a/libswappywrapper.so	ee119b193f6a88f6
+2	87	7136575889097681	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	68af853e9eac816a
+87	256	7136575890517664	C:/Users/miron/Documents/GitHub/Castle-Zombie/Library/PramData/AndroidApplicationController/Cache/com.DefaultCompany.CastleZombie/gradle-project/unityLibrary/build/intermediates/cxx/Debug/4x505f22/obj/armeabi-v7a/libswappywrapper.so	ee119b193f6a88f6
+2	117	7136580097954293	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	68af853e9eac816a
+117	250	7136580098984288	C:/Users/miron/Documents/GitHub/Castle-Zombie/Library/PramData/AndroidApplicationController/Cache/com.DefaultCompany.CastleZombie/gradle-project/unityLibrary/build/intermediates/cxx/Debug/4x505f22/obj/armeabi-v7a/libswappywrapper.so	ee119b193f6a88f6

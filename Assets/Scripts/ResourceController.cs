@@ -110,6 +110,7 @@ public class ResourceController : MonoBehaviour
         _resources[resourceKey] = currentAmount + value;
         _ui.RefreshUI(resourceKey, _resources[resourceKey]);
         ShowFloatingText(resourceKey, value);
+        TaskController.Instance.CompleteTask(TaskType.MiningResource, value);
 
         SaveResource(resourceKey, _resources[resourceKey]);
     }

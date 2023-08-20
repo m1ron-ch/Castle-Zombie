@@ -15,8 +15,8 @@ public class InfiniteRotationAndMovement : MonoBehaviour
     private void StartAnimations()
     {
         Sequence moveSequence = DOTween.Sequence();
-        moveSequence.Append(transform.DOMoveY(transform.position.y + moveDistance, moveSpeed).SetEase(Ease.OutQuad));
-        moveSequence.Append(transform.DOMoveY(transform.position.y, moveSpeed).SetEase(Ease.InQuad));
+        moveSequence.Append(transform.DOLocalMoveY(transform.localPosition.y + moveDistance, moveSpeed).SetEase(Ease.OutQuad));
+        moveSequence.Append(transform.DOLocalMoveY(transform.localPosition.y, moveSpeed).SetEase(Ease.InQuad));
         moveSequence.SetLoops(-1);
 
         transform.DOLocalRotate(new Vector3(0, 360, 0), (float)1.0f / rotationSpeed, RotateMode.LocalAxisAdd)

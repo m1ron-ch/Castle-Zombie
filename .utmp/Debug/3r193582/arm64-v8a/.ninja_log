@@ -1,0 +1,5 @@
+# ninja log v5
+194	299	7138038872546738	C:/Users/miron/Documents/GitHub/Castle-Zombie/Library/PramData/AndroidApplicationController/Cache/com.M1RONGAMES.VillageZombie/gradle-project/unityLibrary/build/intermediates/cxx/Debug/3r193582/obj/arm64-v8a/libswappywrapper.so	598e7e44e87cddc3
+1	193	7138038871778947	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	7d64f204473d190b
+1	84	7138154667180562	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	7d64f204473d190b
+85	196	7138154667988130	C:/Users/miron/Documents/GitHub/Castle-Zombie/Library/PramData/AndroidApplicationController/Cache/com.M1RONGAMES.VillageZombie/gradle-project/unityLibrary/build/intermediates/cxx/Debug/3r193582/obj/arm64-v8a/libswappywrapper.so	598e7e44e87cddc3

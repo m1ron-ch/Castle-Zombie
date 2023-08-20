@@ -13,15 +13,14 @@ public class Building : MonoBehaviour
 
     private void Awake()
     {
-        _defaultScale = transform.localScale;
-        transform.localScale = Vector3.zero;
-
         Hide();
     }
 
-    public void Build()
+    public virtual void Build()
     {
         transform.SetParent(null);
+        _defaultScale = transform.localScale;
+        transform.localScale = Vector3.zero;
 
         Show();
         transform.DOScale(_defaultScale * 1.4f, 0.35f).OnComplete(() => transform.DOScale(_defaultScale, 0.3f));

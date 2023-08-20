@@ -6,7 +6,7 @@ public class Key : MonoBehaviour
 {
     public enum Animations
     {
-        Idle, Walking, Running, Chop, PistolIdle, PistolRunning
+        Idle, Walking, Running, Chop, PistolIdle, PistolRunning, Death
     }
 
     public enum ObjectType
@@ -21,6 +21,6 @@ public class Key : MonoBehaviour
 
     public enum Prefs
     {
-        InvetoryCapacity, MaxInvetoryCapacity, CurrentBuildingHierarchy, Buldings
+        InvetoryCapacity, MaxInvetoryCapacity, CurrentBuildingHierarchy, Buldings, Tasks
     }
 }
