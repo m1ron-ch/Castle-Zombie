@@ -13,9 +13,12 @@ public class UIFloatingText : MonoBehaviour
 
     public void ShowText(Vector3 position, int amountResources, UnityEngine.Sprite icon)
     {
-        transform.position = position;
+        float maxHorizontalOffset = 0.4f;
+        float maxVerticalOffset = 0.6f;
+        Vector3 randomOffset = new Vector3(Random.Range(-maxHorizontalOffset, maxHorizontalOffset), 0, 0);
+        transform.position = position + randomOffset;
         transform.rotation = Camera.main.transform.rotation;
-        transform.DOMoveY(3, 0.3f);
+        transform.DOMoveY(3 + Random.Range(-maxVerticalOffset, maxVerticalOffset), 0.3f);
         _text.text = $"+{amountResources}";
         _icon.sprite = icon;
 

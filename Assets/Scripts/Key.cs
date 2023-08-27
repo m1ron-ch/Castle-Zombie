@@ -6,7 +6,7 @@ public class Key : MonoBehaviour
 {
     public enum Animations
     {
-        Idle, Walking, Running, Chop, PistolIdle, PistolRunning, Death
+        Idle, Walking, Running, Chop, PistolIdle, PistolRunning, Death, Attack
     }
 
     public enum ObjectType

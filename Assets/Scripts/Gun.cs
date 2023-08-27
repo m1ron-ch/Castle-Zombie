@@ -15,11 +15,22 @@ public abstract class Gun : MonoBehaviour
     [SerializeField] protected float _bulletSpeed = 0.4f;
 
     protected Enemy _target;
+    private bool _isCanFire = true;
     private float _nextFireTime;
 
     public virtual void Init(EnemyManager enemyManager)
     {
         _enemyManager = enemyManager;
+    }
+
+    public void Active()
+    {
+        _isCanFire = true;
+    }
+
+    public void Deactivate()
+    {
+        _isCanFire = false;
     }
 
     protected void FindTarget()
@@ -38,6 +49,8 @@ public abstract class Gun : MonoBehaviour
 
     protected virtual void Shoot()
     {
+        if (!_isCanFire) return;
+
         SoundManager.Instance.PlayPersonGun();
 
         Bullet bullet = Instantiate(_bullet, Vector3.zero, Quaternion.identity);

@@ -7,44 +7,71 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Player : Humanoid
 {
+    [SerializeField] private HealthBar _healthBar;
     [SerializeField] private DynamicJoystick _joystick;
     [SerializeField] private Transform _dustPrefab;
     [SerializeField] private Transform _dustInstatiatePoint;
 
     [Header("Tools")]
-    [SerializeField] private Transform _personalWeapon;
+    [SerializeField] private Gun _personalWeapon;
     [SerializeField] private Transform _axe;
+    [SerializeField] private Transform _pickaxe;
 
     private enum Status
     {
-        None, Mine, Attack,
+        None, Mine, Attack, Death, Wait
     }
 
+    private static Player s_instance;
     private Rigidbody _rb;
     private Animator _animator;
     private Transform _resource;
+    private Coroutine _attack;
     private Key.Animations _currentAnimation;
     private Status _status = Status.None;
-    private Coroutine _attack;
-    private float _speed = 5;
-    private int _damage = 10;
     private bool _isDust = false;
 
+    [Header("Player Paramas")]
+    private int _maxHealth;
+    private int _health = 100;
+    private int _damage = 10;
+    private float _speed = 5;
+
+    public static Player Instance => s_instance;
     public bool IsMove => _joystick.IsTouch;
 
     #region MonoBehaviour
-    private void Start()
+    private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
 
+        if (s_instance == null)
+        {
+            s_instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        _maxHealth = _health;
+
         _personalWeapon.gameObject.SetActive(false);
         _axe.gameObject.SetActive(false);
+        _pickaxe?.gameObject.SetActive(false);
     }
 
     private void FixedUpdate()
     {
-        Debug.Log($"Status: {_status}");
+        if ((_status == Status.Death) || (_status == Status.Wait))
+            return;
 
         _animator.SetBool(_currentAnimation.ToString(), _joystick.IsTouch);
         if (_joystick.IsTouch)
@@ -115,19 +142,61 @@ public class Player : Humanoid
         HandleObjectInteraction(other.gameObject);
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.TryGetComponent(out ObjectType objectType))
-        {
-            ExitFromAttackResource();
-        }
-    }
-
     private void OnTriggerStay(Collider other)
     {
         HandleObjectInteraction(other.gameObject);
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out ObjectType objectType))
+        {
+            if (other.transform == _resource)
+            {
+                ExitFromAttackResource();
+                _resource = null;
+            }
+        }
+    }
     #endregion
+
+    public void Health(int value)
+    {
+        if (value + _health >= _maxHealth)
+            _health = _maxHealth;
+        else
+            _health += value;
+
+        _healthBar.Health(value, _maxHealth);
+    }
+
+    public void Damage(int value)
+    {
+        _health -= value;
+        _healthBar.Damage(value, _maxHealth);
+
+        Death();
+    }
+
+    public void Revive()
+    {
+        _health = _maxHealth;
+        Health(_maxHealth);
+
+        _status = Status.None;
+        _animator.SetBool(Key.Animations.Death.ToString(), false);
+
+        EnemyManager.Instance.FindPlayerForAllEnemy();
+
+        _personalWeapon.Active();
+        UIRevive.Instance.Hide();
+    }
+
+    public void Wait(bool value)
+    {
+        _animator.SetBool(Key.Animations.Running.ToString(), false);    
+        _status = value ? Status.Wait : Status.None;
+    }
 
     private void HandleObjectInteraction(GameObject other)
     {
@@ -146,7 +215,7 @@ public class Player : Humanoid
                         _resource = other.transform;
                         ShowObject(_axe);
 
-                        _attack = StartCoroutine(Attack(resource));
+                        _attack = StartCoroutine(Attack(resource, objectType.Type));
                     }
 
                     break;
@@ -156,7 +225,7 @@ public class Player : Humanoid
         }
     }
 
-    private IEnumerator Attack(Resource resource)
+    private IEnumerator Attack(Resource resource, Key.ObjectType type)
     {
         while (true)
         {
@@ -166,8 +235,17 @@ public class Player : Humanoid
                 yield break;
             }
 
-            _animator.SetTrigger(Key.Animations.Chop.ToString());
-            SoundManager.Instance.PlayChop();
+            switch (type)
+            {
+                case Key.ObjectType.Tree:
+                    _animator.SetTrigger(Key.Animations.Chop.ToString());
+                    SoundManager.Instance.PlayChop();
+                    break;
+                case Key.ObjectType.Rock:
+                    _animator.SetTrigger(Key.Animations.Chop.ToString());
+                    Util.Invoke(this, () => SoundManager.Instance.PlayPickRock(), 0.35f);
+                    break;
+            }
 
             yield return new WaitForSeconds(1f);
         }
@@ -179,6 +257,11 @@ public class Player : Humanoid
 
         while (_isDust)
         {
+            if (_status == Status.Death)
+            {
+                yield break;
+            }
+
             yield return new WaitForSeconds(0.1f);
 
             Vector3 playerPosition = _dustInstatiatePoint.position;
@@ -205,16 +288,30 @@ public class Player : Humanoid
             StopCoroutine(_attack);
     }
 
+    private void Death()
+    {
+        if (_health > 0)
+            return;
+
+        _status = Status.Death;
+        _animator.SetBool(Key.Animations.Death.ToString(), true);
+
+        EnemyManager.Instance.ResetTargetAllEnemy();
+        UIRevive.Instance.Show();
+
+        _personalWeapon.Deactivate();
+    }
+
     private void ExitFromAttackResource()
     {
         StopCoroutine();
+        StopAllCoroutines();
 
         _status = Status.None;
         _resource = null;
 
+        _animator.ResetTrigger(Key.Animations.Chop.ToString());
         Util.Invoke(this, () => HideObject(_axe), 1.7f);
-        if (_currentAnimation == Key.Animations.Chop)
-            _animator.ResetTrigger(_currentAnimation.ToString());
     }
 
     private void ShowObject(Transform obj)
@@ -225,13 +322,5 @@ public class Player : Humanoid
     private void HideObject(Transform obj)
     {
         obj.gameObject.SetActive(false);
-    }
-
-    public override void Freeze()
-    {
-        base.Freeze();
-
-        // _isFreeze = true;
-        _joystick.Deactivate();
     }
 }

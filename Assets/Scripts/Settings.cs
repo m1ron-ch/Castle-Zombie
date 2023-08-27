@@ -6,7 +6,7 @@ public class Settings : MonoBehaviour
 {
     private void Awake()
     {
-        Application.targetFrameRate = 120;
+        Application.targetFrameRate = 144;
 
         Debug.Log($"{Screen.width} {Screen.height}");
     }

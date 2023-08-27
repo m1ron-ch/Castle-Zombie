@@ -1,19 +1,41 @@
 using Newtonsoft.Json;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+[System.Serializable]
+public class BuildingRow
+{
+    public List<BuildingPoint> BuildingPoints = new();
+    public bool IsCameraWatchBuildings;
+}
+
+[System.Serializable]
+public class BuildingRowData
+{
+    public List<BuildingData> Buildings = new();
+    public bool IsCameraWatchBuildings;
+}
+
+[System.Serializable]
+public class BuildingData
+{
+    public string Name;
+    public bool IsBuild;
+    public bool IsNecessarilyBuildToNextHierarchy;
+    public List<BuildingPointCost> BuildingCost;
+}
 
 public class BuildingManager : MonoBehaviour
 {
     [SerializeField] private List<BuildingRow> _buildings = new();
 
-    private int _currentBuildingHierarchy;
-
     private static BuildingManager s_instance;
-    private bool _isLastBuildingsHierarchy => _currentBuildingHierarchy > _buildings.Count - 1;
+    private int _currentBuildingHierarchy;
 
     public List<BuildingRow> BuildingRows => _buildings;
     public static BuildingManager Instance => s_instance;
+    
+    private bool _isLastBuildingsHierarchy => _currentBuildingHierarchy > _buildings.Count - 1;
 
     #region MonoBehaviour
     private void Awake()
@@ -62,6 +84,8 @@ public class BuildingManager : MonoBehaviour
             BuildingRowData rowData = new BuildingRowData();
             rowData.Buildings = new List<BuildingData>();
 
+            rowData.IsCameraWatchBuildings = row.IsCameraWatchBuildings;
+
             foreach (BuildingPoint building in row.BuildingPoints)
             {
                 BuildingData buildingData = new BuildingData();
@@ -96,6 +120,8 @@ public class BuildingManager : MonoBehaviour
 
         for (int i = 0; i < buildingsData.Count; i++)
         {
+            _buildings[i].IsCameraWatchBuildings = buildingsData[i].IsCameraWatchBuildings;
+
             for (int j = 0; j < buildingsData[i].Buildings.Count; j++)
             {
                 _buildings[i].BuildingPoints[j].Init(buildingsData[i].Buildings[j].BuildingCost);
@@ -151,7 +177,7 @@ public class BuildingManager : MonoBehaviour
 
     private void ShowCurrentBuildings(int index)
     {
-        if (_currentBuildingHierarchy > _buildings.Count - 1)
+        if (_isLastBuildingsHierarchy)
         {
             return;
         }
@@ -160,13 +186,25 @@ public class BuildingManager : MonoBehaviour
         {
             buildingPoint.Show();
         }
+
+        if (!_buildings[index].IsCameraWatchBuildings)
+        {
+            _buildings[index].IsCameraWatchBuildings = true;
+            Save();
+
+            FollowingCamera.Instance.MoveToBuildings(_buildings[index].BuildingPoints);
+        }
     }
 
     private void HideAllBuildings()
     {
         foreach (BuildingRow row in _buildings)
+        {
             foreach (BuildingPoint building in row.BuildingPoints)
+            {
                 building.Hide();
+            }
+        }
     }
 
     private void NextBuildingHierarchy()
@@ -175,25 +213,4 @@ public class BuildingManager : MonoBehaviour
         PlayerPrefs.SetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), _currentBuildingHierarchy);
     }
 
-}
-
-[System.Serializable]
-public class BuildingRow
-{
-    public List<BuildingPoint> BuildingPoints = new();
-}
-
-[System.Serializable]
-public class BuildingRowData
-{
-    public List<BuildingData> Buildings = new List<BuildingData>();
-}
-
-[System.Serializable]
-public class BuildingData
-{
-    public string Name;
-    public bool IsBuild;
-    public bool IsNecessarilyBuildToNextHierarchy;
-    public List<BuildingPointCost> BuildingCost;
 }

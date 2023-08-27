@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using static UnityEngine.GraphicsBuffer;
 
 public class PointerHelper : MonoBehaviour
 {
@@ -75,6 +71,7 @@ public class PointerHelper : MonoBehaviour
     {
         _target = target;
        _pointer.SetActive(true);
+        _isShowPointer = false;
     }
 
     public void ResetTarget()
@@ -83,6 +80,5 @@ public class PointerHelper : MonoBehaviour
         _target = null;
 
         _pointer.transform.position = -Vector3.one;
-        _pointer.gameObject.SetActive(false);
     }
 }

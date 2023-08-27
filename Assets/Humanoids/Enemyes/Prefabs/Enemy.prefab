@@ -798,11 +798,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe78d229159c7df42b5768468250ee54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyObj: {fileID: 3187818651633635189}
+  _skinDeath: {fileID: 2100000, guid: e612f89e638c86b48856bbd3010ee6b5, type: 2}
   _maxHealth: 19
   _health: 19
 --- !u!95 &8577064353304735744
 Animator:
-  serializedVersion: 7
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -816,7 +818,6 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1

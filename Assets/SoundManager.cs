@@ -7,8 +7,10 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource _runningSource;
     [SerializeField] private AudioSource _personGunSource;
     [SerializeField] private AudioSource _chopSource;
+    [SerializeField] private AudioSource _pickRock;
     [SerializeField] private AudioSource _addResource;
     [SerializeField] private AudioSource _takeResource;
+    [SerializeField] private AudioSource _zombieAttack;
 
     private static SoundManager s_instance;
 
@@ -47,7 +49,6 @@ public class SoundManager : MonoBehaviour
 
     public void PlayPersonGun()
     {
-/*        if (!_personGunSource.isPlaying)*/
             _personGunSource.Play();
     }
 
@@ -65,6 +66,16 @@ public class SoundManager : MonoBehaviour
     public void PlayTakeResource()
     {
         _takeResource.Play();
+    }
+
+    public void PlayPickRock()
+    {
+        _pickRock.Play();
+    }
+
+    public void PlayZombieAttack()
+    {
+            _zombieAttack.Play();
     }
 
     #endregion

@@ -1,27 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
-    [SerializeField] private TMPro.TMP_Text _healthText;
 
-    private float _maxHealth;
-
-    public void SetMaxHealth(float maxHealth)
+    private void Awake()
     {
-        _slider.value = 1;
-        _healthText.text = maxHealth.ToString();
-
-        _maxHealth = maxHealth;
+        SetMaxHealth(); 
     }
 
-    public void SetHealth(float damage, float health)
+    private void Update()
     {
-        _slider.value -= ((float)damage / Mathf.Pow(10, _maxHealth.ToString().Length - 1)) / 2;
-        _healthText.text = health.ToString();
+        transform.LookAt(Camera.main.transform);
+    }
+
+    public void SetMaxHealth()
+    {
+        _slider.value = 1;
+    }
+
+    public void Damage(int value, int maxHealth)
+    {
+        _slider.value -= Util.CalculatePercentage(value, maxHealth);
+    }
+
+    public void Health(int value, int maxHealth)
+    {
+        _slider.value += Util.CalculatePercentage(value, maxHealth);
     }
 
     public void Show()

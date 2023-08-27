@@ -24,8 +24,8 @@ public class Task
     [JsonIgnore] public List<Transform> TargetsForPointerHelper = new();
 
     [Header("Reward")]
-    [JsonIgnore] public Key.ResourcePrefs Resource;
-    [JsonIgnore] public int Count;
+    [JsonIgnore] public Key.ResourcePrefs RewardResource;
+    [JsonIgnore] public int RewardValue;
 
     [Header("Not Necessary"), JsonIgnore] public Building Building;
 }
@@ -33,28 +33,21 @@ public class Task
 public class TaskController : MonoBehaviour
 {
     [Header("Scripts")]
+    [SerializeField] private UITaskController _ui;
     [SerializeField] private BuildingManager _buildingManager;
 
-    [Header("Task Panel")]
-    [SerializeField] private UnityEngine.Sprite _completeIcon;
-    [SerializeField] private UnityEngine.UI.Image _icon;
-    [SerializeField] private UnityEngine.UI.Slider _slider;
-    [SerializeField] private TMPro.TMP_Text _description;
-    [SerializeField] private TMPro.TMP_Text _progress;
-    
-    [Header("Task Panels")]
-    [SerializeField] private Transform _taskPanel;
-    [SerializeField] private Transform _completeTaskPanel;
-
-    [SerializeField, Header("Tasks")] private List<Task> _tasks = new();
+    [Header("Tasks")]
+    [SerializeField] private List<Task> _tasks = new();
 
     private int _taskIndex = 0;
     private bool _isCanComplete = true;
+    private bool _isAllTasksComplete;
 
     private static TaskController s_instance;
 
     public static TaskController Instance => s_instance ?? null;
     public Task Task => _tasks[_taskIndex];
+
 
     #region MonoBehaviour
     private void Awake()
@@ -88,47 +81,44 @@ public class TaskController : MonoBehaviour
 
     public void CompleteTask(TaskType taskType, int value)
     {
-        if (!_isCanComplete)
+        Debug.Log($"Task index {_taskIndex} / Tasks coint {_tasks.Count}");
+        if (!_isCanComplete || _isAllTasksComplete)
             return;
 
         if (taskType == _tasks[_taskIndex].Type)
         {
             _tasks[_taskIndex].CurrentProgress += value;
-            _slider.value = Util.CalculatePercentage(_tasks[_taskIndex].CurrentProgress, _tasks[_taskIndex].TotalProgress);
-            RefreshProgress(_tasks[_taskIndex]);
+            _ui.Slider.value = Util.CalculatePercentage(_tasks[_taskIndex].CurrentProgress, _tasks[_taskIndex].TotalProgress);
+            _ui.RefreshUI(_tasks[_taskIndex]);
+            Save();
 
             if (_tasks[_taskIndex].CurrentProgress >= _tasks[_taskIndex].TotalProgress)
             {
+                _tasks[_taskIndex].IsCompleted = true;
+                Save();
+
+                _isCanComplete = false;
+
+                Util.Invoke(this, () => ResourceController.AddResource(_tasks[_taskIndex].RewardResource, _tasks[_taskIndex].RewardValue), 2.2f);
                 PointerHelper.Instance.ResetTarget();
-                ScaleOnCompleteSprite();
+                _ui.ShowCompleTask();
             }
         }
     }
 
     public void CompleteTask(TaskType taskType, Building building)
     {
-        if (!_isCanComplete)
-            return;
-
-        if (taskType == _tasks[_taskIndex].Type ||
-            building == _tasks[_taskIndex].Building)
+        if (building == _tasks[_taskIndex].Building)
         {
-            _tasks[_taskIndex].CurrentProgress++;
-            _slider.value = Util.CalculatePercentage(_tasks[_taskIndex].CurrentProgress, _tasks[_taskIndex].TotalProgress);
-            RefreshProgress(_tasks[_taskIndex]);
-
-            if (_tasks[_taskIndex].CurrentProgress == _tasks[_taskIndex].TotalProgress)
-            {
-                PointerHelper.Instance.ResetTarget();
-                ScaleOnCompleteSprite();
-            }
+            CompleteTask(taskType, 1);
         }
     }
 
-    private void OnComplete()
+    public void OnComplete()
     {
         _isCanComplete = true;
         _tasks[_taskIndex].IsCompleted = true;
+
         ShowCurrentTask();
         Save();
     }
@@ -140,7 +130,7 @@ public class TaskController : MonoBehaviour
             if (!_tasks[i].IsCompleted)
             {
                 _taskIndex = i;
-                RefreshUI(_tasks[i]);
+                _ui.RefreshUI(_tasks[i]);
 
                 if (_tasks[_taskIndex].TargetsForPointerHelper.Any())
                 {
@@ -168,7 +158,8 @@ public class TaskController : MonoBehaviour
             }
         }
 
-        _taskPanel.gameObject.SetActive(false);
+        _isAllTasksComplete = true;
+        _ui.Hide();
     }
 
     private bool IsBuildingBuild(Building building)
@@ -179,59 +170,13 @@ public class TaskController : MonoBehaviour
             {
                 if (buildingPoint.Building == building)
                 {
-                    if (buildingPoint.IsBuild)
-                    {
-                        return true;
-                    }
-
-                    PointerHelper.Instance.SetTarget(buildingPoint.Building.transform);
+                    return buildingPoint.IsBuild;
+                    // PointerHelper.Instance.SetTarget(buildingPoint.Building.transform);
                 }
             }
         }
 
         return false;
-    }
-
-    private void ScaleOnCompleteSprite()
-    {
-        _isCanComplete = false;
-
-        _icon.transform.localScale = Vector3.zero;
-        _icon.sprite = _completeIcon;
-
-        _icon.transform.DOScale(Vector3.one, 0.6f)
-            .SetEase(Ease.OutBack)
-            .OnComplete(() => _taskPanel.transform.DOScale(0, 0.5f).SetDelay(1f)
-                .OnComplete(() =>
-                {
-                    _completeTaskPanel.gameObject.SetActive(true);
-                    _completeTaskPanel.transform.localScale = Vector3.zero;
-                    _completeTaskPanel.transform.DOScale(Vector3.one, 0.6f)
-                        .OnComplete(() =>
-                        {
-                            _completeTaskPanel.transform.DOScale(Vector3.zero, 0.5f)
-                                .OnComplete(() =>
-                                {
-                                    _completeTaskPanel.gameObject.SetActive(false);
-                                    _taskPanel.transform.localScale = Vector3.zero;
-                                    _taskPanel.transform.DOScale(Vector3.one, 0.6f);
-                                    OnComplete();
-                                }).SetDelay(1f);
-                        });
-                })); 
-    }
-
-    private void RefreshUI(Task task)
-    {
-        _icon.sprite = task?.Sprite;
-        _description.text = task?.Description;
-        RefreshProgress(task);
-        _slider.value = Util.CalculatePercentage(task.CurrentProgress, task.TotalProgress);
-    }
-
-    private void RefreshProgress(Task task)
-    {
-        _progress.text = $"{task.CurrentProgress} / {task.TotalProgress}";
     }
 
     private void Save()

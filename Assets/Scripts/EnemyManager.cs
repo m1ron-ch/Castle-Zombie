@@ -38,21 +38,43 @@ public class EnemyManager : MonoBehaviour
 
     private void Start()
     {
-        StartSpaw();
+        SpawnEnemy(_spawPoints[0].position);
+        StartCoroutine(Spaw());
     }
     #endregion
 
-    public void StartSpaw()
+    public IEnumerator Spaw()
     {
-        for (int i = 0; i < _enemyCount; i++)
+        while (true)
         {
-            SpawnEnemy(_spawPoints[i].position);
+            for (int i = 0; i < _enemyCount; i++)
+            {
+                SpawnEnemy(_spawPoints[i].position);
+            }
+
+            yield return new WaitForSeconds(7);
         }
     }
 
     public void StopSpaw()
     {
 
+    }
+
+    public void ResetTargetAllEnemy()
+    {
+        foreach (Enemy enemy in _enemies)
+        {
+            enemy.SetTarget(null);
+        }
+    }
+
+    public void FindPlayerForAllEnemy()
+    {
+        foreach(Enemy enemy in _enemies)
+        {
+            enemy.SetTarget(_player.transform);
+        }
     }
 
     public void SpawnEnemy(Vector3 position)

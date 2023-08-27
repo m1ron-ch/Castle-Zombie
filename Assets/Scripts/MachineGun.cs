@@ -67,7 +67,6 @@ public class MachineGun : MonoBehaviour
 
     private void Use()
     {
-        _player.Freeze();
         SitDown();
 
         _isCanShoot = true;

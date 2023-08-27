@@ -26,6 +26,16 @@ public static class Util
             return (float)(value - minValue) / (maxValue - minValue);
     }
 
+    public static float CalculatePercentage(float value, int maxValue, int minValue = 0)
+    {
+        if (value < minValue)
+            return 0.0f;
+        else if (value > maxValue)
+            return 100.0f;
+        else
+            return (float)(value - minValue) / (maxValue - minValue);
+    }
+
     public static string FormatNumber(int number)
     {
         List<char> _suffixes = new List<char>() { 'K', 'M', 'B' /* etc */ };

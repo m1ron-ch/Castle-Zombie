@@ -1,11 +1,14 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CagePrologBuilding : Building
 {
-    [SerializeField] private List<Transform> _hostages = new();
+    [SerializeField] private ParticleSystem _smoke;
+    [SerializeField] private List<PlayerAI> _hostages = new();
+
     #region MonoBehaviour
     private void Awake()
     {
@@ -17,12 +20,22 @@ public class CagePrologBuilding : Building
     {
         TaskController.Instance.CompleteTask(TaskType.BuildStructure, this);
 
-        foreach (Transform hostage in _hostages)
-            hostage?.SetParent(null);
-
         transform.SetParent(null);
-        transform.localScale = Vector3.one;
-        transform.DOScale(Vector3.zero, 0.5f)
+        transform.DOScale(Vector3.zero, 0.75f)
+            .OnStart(() =>
+            {
+                _smoke.Play();
+                FreeHostage();
+            })
             .OnComplete(() => Hide());
+    }
+
+    private void FreeHostage()
+    {
+        foreach (PlayerAI hostage in _hostages)
+        {
+            hostage.transform.SetParent(null);
+            hostage.Active();
+        }
     }
 }

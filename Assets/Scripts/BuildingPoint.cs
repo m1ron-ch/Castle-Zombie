@@ -5,6 +5,13 @@ using TMPro;
 using DG.Tweening;
 
 [System.Serializable]
+public class BuildingPointCost
+{
+    public Key.ResourcePrefs Resource;
+    public int Cost;
+}
+
+[System.Serializable]
 public class BuildingPoint : MonoBehaviour
 {
     [SerializeField] private Building _building;
@@ -164,11 +171,4 @@ public class BuildingPoint : MonoBehaviour
         }
     }
     
-}
-
-[System.Serializable]
-public class BuildingPointCost
-{
-    public Key.ResourcePrefs Resource;
-    public int Cost;
 }

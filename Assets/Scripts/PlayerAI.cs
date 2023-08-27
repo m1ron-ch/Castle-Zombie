@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,19 +13,25 @@ public class PlayerAI : Humanoid
     {
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
-    }
 
-    public override void Freeze()
-    {
-        base.Freeze();
-
-        _animator.SetBool(Key.Animations.Running.ToString(), false);
-        _agent.isStopped = true;
+        Deactivate();
     }
 
     public void MoveTo(Vector3 position)
     {
+        Active();
+
         _agent.destination = position;
         _animator.SetBool(Key.Animations.Running.ToString(), true);
+    }
+
+    public void Active()
+    {
+        _agent.enabled = true;
+    }
+
+    public void Deactivate()
+    {
+        _agent.enabled = false;
     }
 }

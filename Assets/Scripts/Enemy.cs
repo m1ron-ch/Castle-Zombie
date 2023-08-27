@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,8 @@ using UnityEngine.AI;
 [RequireComponent (typeof(Animator))]
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] private GameObject _enemyObj;
+    [SerializeField] private Material _skinDeath;
     [SerializeField] private float _maxHealth = 100;
     [SerializeField] private float _health = 100;
 
@@ -14,7 +17,9 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent _agent;
     private Animator _animator;
     private Rigidbody _rg;
-    private float _damage = 5;
+    private int _damage = 12;
+    private bool _isAttack;
+    private bool _isAttackCooldown;
 
     public NavMeshAgent Agent => _agent;
     public Rigidbody Rigidbody => _rg;
@@ -44,6 +49,20 @@ public class Enemy : MonoBehaviour
         {
             Damage(bullet.Damage);
             bullet.Destroy();
+        }
+
+        if (other.gameObject.TryGetComponent(out Player player))
+        {
+            _isAttack = true;
+            Attack(player);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out Player player))
+        {
+            _isAttack = false;
         }
     }
 
@@ -93,7 +112,8 @@ public class Enemy : MonoBehaviour
     public void Death()
     {
         _target = null;
-        transform.GetComponent<BoxCollider>().enabled = false;
+        _enemyObj.GetComponent<Renderer>().material = _skinDeath;
+        transform.transform.GetComponent<BoxCollider>().enabled = false;
 
         Stop();
         _animator.SetTrigger(Key.Animations.Death.ToString());
@@ -107,5 +127,26 @@ public class Enemy : MonoBehaviour
 
         EnemyManager.Enemies.Remove(this);
         Util.Invoke(this, () => Destroy(gameObject), 2);
+    }
+
+    private void Attack(Player player)
+    {
+        if ((_target == null) || !_isAttack || _isAttackCooldown) { return; }
+
+        SoundManager.Instance.PlayZombieAttack();
+        _animator.SetTrigger(Key.Animations.Attack.ToString());
+        player.Damage(_damage);
+
+        StartCoroutine(AttackCooldown());
+
+        if (_isAttack) { Util.Invoke(this, () => Attack(player), 2f); }
+    }
+
+    private IEnumerator AttackCooldown()
+    {
+        _isAttackCooldown = true;
+        yield return new WaitForSeconds(1);
+
+        _isAttackCooldown = false;
     }
 }

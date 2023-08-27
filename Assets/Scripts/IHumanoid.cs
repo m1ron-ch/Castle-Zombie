@@ -4,5 +4,4 @@ using UnityEngine;
 
 public interface IHumanoid
 {
-    public void Freeze();
 }

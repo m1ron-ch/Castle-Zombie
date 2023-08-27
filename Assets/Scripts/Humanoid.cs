@@ -4,5 +4,4 @@ using UnityEngine;
 
 public abstract class Humanoid : MonoBehaviour, IHumanoid
 {
-    public virtual void Freeze() { }
 }
