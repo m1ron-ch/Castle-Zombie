@@ -20,6 +20,16 @@ public class Enemy : MonoBehaviour
     private int _damage = 12;
     private bool _isAttack;
     private bool _isAttackCooldown;
+    private bool _isDeath;
+
+    [Header("Patrol")]
+    private Vector3 _patrolObj;
+    private float _patrolRadius = 5.0f;
+    private float _minWaitTime = 3.0f;
+    private float _maxWaitTime = 4.0f;
+    private float _waitTimer = 0.0f;
+    private Vector3 _patrolPoint;
+    private bool _isWaiting = true;
 
     public NavMeshAgent Agent => _agent;
     public Rigidbody Rigidbody => _rg;
@@ -29,6 +39,13 @@ public class Enemy : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();  
         _rg = GetComponent<Rigidbody>();
+
+        _patrolObj = transform.position;
+        _patrolPoint = GetRandomPointInRadius();
+        SetDestination(_patrolPoint);
+        Move();
+
+        // _animator.speed = UnityEngine.Random.Range(0.7f, 2.5f);
     }
 
     private void FixedUpdate()
@@ -37,9 +54,28 @@ public class Enemy : MonoBehaviour
         {
             MoveToTarget();
         }
-        else
+        else if (!_isDeath)
         {
-            Stop();
+            if (!_isWaiting)
+            {
+                if (_agent.remainingDistance <= _agent.stoppingDistance)
+                {
+                    _waitTimer = UnityEngine.Random.Range(_minWaitTime, _maxWaitTime);
+                    _isWaiting = true;
+                    Stop();
+                }
+            }
+            else
+            {
+                _waitTimer -= Time.deltaTime;
+                if (_waitTimer <= 0.0f)
+                {
+                    _patrolPoint = GetRandomPointInRadius();
+                    SetDestination(_patrolPoint);
+                    _isWaiting = false;
+                    Move();
+                }
+            }
         }
     }
 
@@ -71,11 +107,29 @@ public class Enemy : MonoBehaviour
         _target = target;
     }
 
+    public void SetPatrolPoint(Transform point, float patrolRadius = 5)
+    {
+        _patrolObj = point.position;
+        _patrolRadius = patrolRadius;
+    }
+
     public void MoveToTarget()
     {
+        if (_target == null)
+        {
+            return;
+        }
+
         _agent.destination = _target.position;
         _agent.isStopped = false;
         _animator.SetBool(Key.Animations.Walking.ToString(), true);
+    }
+
+    public void Move()
+    {
+        _agent.isStopped = false;
+        _animator.SetBool(Key.Animations.Walking.ToString(), true);
+        _animator.SetBool(Key.Animations.Idle.ToString(), false);
     }
 
     public void Stop()
@@ -104,13 +158,18 @@ public class Enemy : MonoBehaviour
     public void Damage(float value)
     {
         if (_health - value > 0)
+        {
             _health -= value;
-        else 
+        }
+        else
+        {
             Death();
+        } 
     }
 
     public void Death()
     {
+        _isDeath = true;
         _target = null;
         _enemyObj.GetComponent<Renderer>().material = _skinDeath;
         transform.transform.GetComponent<BoxCollider>().enabled = false;
@@ -127,6 +186,21 @@ public class Enemy : MonoBehaviour
 
         EnemyManager.Enemies.Remove(this);
         Util.Invoke(this, () => Destroy(gameObject), 2);
+    }
+
+    private Vector3 GetRandomPointInRadius()
+    {
+        Vector2 randomCircle = UnityEngine.Random.insideUnitCircle.normalized * _patrolRadius;
+        Vector3 randomPoint = ((_patrolObj != null) ? _patrolObj : transform.position) + new Vector3(randomCircle.x, 0, randomCircle.y);
+        NavMeshHit hit;
+        NavMesh.SamplePosition(randomPoint, out hit, _patrolRadius, NavMesh.AllAreas);
+        return hit.position;
+    }
+
+    private void SetDestination(Vector3 destination)
+    {
+        Move();
+        _agent.SetDestination(destination);
     }
 
     private void Attack(Player player)

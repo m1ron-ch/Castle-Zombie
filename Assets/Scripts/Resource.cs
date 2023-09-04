@@ -48,10 +48,10 @@ public class Resource : MonoBehaviour
         switch (_objectType.Type)
         {
             case Key.ObjectType.Tree:
-                ResourceController.AddResource(Key.ResourcePrefs.Wood, 3);
+                ResourceController.AddResource(Key.ResourcePrefs.Wood, ResourceReward.Instance.WoodReward);
                 break;
             case Key.ObjectType.Rock:
-                ResourceController.AddResource(Key.ResourcePrefs.Rock, 2);
+                ResourceController.AddResource(Key.ResourcePrefs.Rock, ResourceReward.Instance.RockReward);
                 break;
         }
     }

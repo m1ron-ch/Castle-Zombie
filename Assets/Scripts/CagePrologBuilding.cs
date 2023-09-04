@@ -8,6 +8,7 @@ public class CagePrologBuilding : Building
 {
     [SerializeField] private ParticleSystem _smoke;
     [SerializeField] private List<PlayerAI> _hostages = new();
+    [SerializeField] private List<Transform> _moveToPoints = new();
 
     #region MonoBehaviour
     private void Awake()
@@ -32,10 +33,11 @@ public class CagePrologBuilding : Building
 
     private void FreeHostage()
     {
-        foreach (PlayerAI hostage in _hostages)
+        for (int i = 0; i < _hostages.Count; i++)
         {
-            hostage.transform.SetParent(null);
-            hostage.Active();
+            _hostages[i].transform.SetParent(null);
+            _hostages[i].Active();
+            _hostages[i].MoveTo(_moveToPoints[i].position);
         }
     }
 }

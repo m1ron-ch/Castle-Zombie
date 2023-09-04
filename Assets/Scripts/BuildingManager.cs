@@ -121,12 +121,16 @@ public class BuildingManager : MonoBehaviour
         for (int i = 0; i < buildingsData.Count; i++)
         {
             _buildings[i].IsCameraWatchBuildings = buildingsData[i].IsCameraWatchBuildings;
-
             for (int j = 0; j < buildingsData[i].Buildings.Count; j++)
             {
                 _buildings[i].BuildingPoints[j].Init(buildingsData[i].Buildings[j].BuildingCost);
                 if (buildingsData[i].Buildings[j].IsBuild)
                 {
+                    if (_buildings[i].BuildingPoints[j].Building.gameObject.TryGetComponent(out CagePrologBuilding cage))
+                    {
+                        continue;
+                    }
+
                     _buildings[i].BuildingPoints[j].Build(true);
                 }
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using System.Linq;
+using System.Data.Common;
 
 public enum TaskType
 {
@@ -81,7 +82,6 @@ public class TaskController : MonoBehaviour
 
     public void CompleteTask(TaskType taskType, int value)
     {
-        Debug.Log($"Task index {_taskIndex} / Tasks coint {_tasks.Count}");
         if (!_isCanComplete || _isAllTasksComplete)
             return;
 
@@ -171,7 +171,6 @@ public class TaskController : MonoBehaviour
                 if (buildingPoint.Building == building)
                 {
                     return buildingPoint.IsBuild;
-                    // PointerHelper.Instance.SetTarget(buildingPoint.Building.transform);
                 }
             }
         }

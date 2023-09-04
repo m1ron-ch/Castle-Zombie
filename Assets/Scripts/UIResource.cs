@@ -27,13 +27,20 @@ public class UIResource : MonoBehaviour
     [SerializeField] private Image _woodImage;
     [SerializeField] private TMP_Text _wood;
 
+    private bool _isFirstRefresh;
+
     #region MonoBehaviour
-    private void Awake()
+    private void Start()
     {
         _coinsImage.sprite = Sprite.Instance.Coins;
         _gemsImage.sprite = Sprite.Instance.Gems;
         _rocksImage.sprite = Sprite.Instance.Rock;
         _woodImage.sprite = Sprite.Instance.Wood;
+
+        ToggleVisibility(ResourceController.Wood, _woodPanel, true);
+        ToggleVisibility(ResourceController.Rock, _rocksPanel, true);
+        ToggleVisibility(ResourceController.Coins, _coinsPanel, true);
+        ToggleVisibility(ResourceController.Gems, _gemsPanel, true);
     }
     #endregion
 
@@ -96,13 +103,13 @@ public class UIResource : MonoBehaviour
         obj.DOScale(1.15f, 0.2f).OnComplete(() => obj.DOScale(1f, 0.1f));
     }
 
-    private void ToggleVisibility(int value, GameObject obj) 
+    private void ToggleVisibility(int value, GameObject obj, bool isStart = false) 
     {
         if (value > 0)
         {
             Show(obj);
         }
-        else
+        else if (isStart)
         {
             Hide(obj);
         }

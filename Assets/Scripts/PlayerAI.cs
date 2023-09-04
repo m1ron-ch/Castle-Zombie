@@ -17,12 +17,21 @@ public class PlayerAI : Humanoid
         Deactivate();
     }
 
-    public void MoveTo(Vector3 position)
+    public virtual void MoveTo(Vector3 position)
     {
         Active();
 
         _agent.destination = position;
         _animator.SetBool(Key.Animations.Running.ToString(), true);
+
+        float delay = Util.CalculateTimeToReachPoint(transform.position, position, _agent.speed);
+        Util.Invoke(this, () => Stop(), delay + 0.2f);
+    }
+
+    public void Stop()
+    {
+        _agent.isStopped = true;
+        _animator.SetBool(Key.Animations.Running.ToString(), false);
     }
 
     public void Active()

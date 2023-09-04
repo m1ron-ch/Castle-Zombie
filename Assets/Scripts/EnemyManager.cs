@@ -15,7 +15,6 @@ public class EnemyManager : MonoBehaviour
     private static EnemyManager s_instance;
     private static List<Enemy> _enemies = new List<Enemy>();
     private float _nearestDistance = 10;
-    private bool _isSpawning;
 
     public static List<Enemy> Enemies => _enemies;
     public static EnemyManager Instance => s_instance;
@@ -52,7 +51,7 @@ public class EnemyManager : MonoBehaviour
                 SpawnEnemy(_spawPoints[i].position);
             }
 
-            yield return new WaitForSeconds(7);
+            yield return new WaitForSeconds(5f);
         }
     }
 
@@ -77,11 +76,16 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void SpawnEnemy(Vector3 position)
+    public void SpawnEnemy(Vector3 position, Transform patrolPoint = null)
     {
         Enemy enemy = Instantiate(_enemyPrefab, position, Quaternion.identity);
         enemy.SetTarget(_player.transform);
         _enemies.Add(enemy);
+
+        if (patrolPoint != null)
+        {
+            enemy.SetPatrolPoint(patrolPoint);
+        }
     }
 
     public Enemy GetNearestEnemy()

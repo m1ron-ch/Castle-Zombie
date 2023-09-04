@@ -110,10 +110,11 @@ public class BuildingPoint : MonoBehaviour
         _building.Build();
 
         if (!isLoad)
+        {
             _buildingManager.Save();
+        }
 
         Hide();
-        //Destroy(gameObject);
     }
 
     public void Show()

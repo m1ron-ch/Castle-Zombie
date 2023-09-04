@@ -10,7 +10,7 @@ public class PointerHelper : MonoBehaviour
     private Camera _mainCamera;
     private float _rotationSpeed = 10f;
     private float _circleRadius = 1.5f;
-    private bool _isShowPointer;
+    private bool _isHidePointer;
 
     public static PointerHelper Instance => s_instance;
 
@@ -39,7 +39,7 @@ public class PointerHelper : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_target == null || _isShowPointer)
+        if (_target == null || _isHidePointer)
             return;
 
         Vector3 targetScreenPosition = _mainCamera.WorldToViewportPoint(_target.position);
@@ -61,24 +61,37 @@ public class PointerHelper : MonoBehaviour
             _pointer.transform.position = new Vector3(_target.position.x, 4, _target.position.z);
             Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
             _pointer.transform.rotation = Quaternion.Slerp(_pointer.transform.rotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime);
-
-
         }
     }
     #endregion
 
     public void SetTarget(Transform target)
     {
+        if (_isHidePointer)
+            return;
+
         _target = target;
-       _pointer.SetActive(true);
-        _isShowPointer = false;
+        _isHidePointer = false;
+
+        Show();
     }
 
     public void ResetTarget()
     {
-        _isShowPointer = true;
+        _isHidePointer = true;
+        Util.Invoke(this, () => _isHidePointer = false, 1.2f);
         _target = null;
 
-        _pointer.transform.position = -Vector3.one;
+        Hide();
+    }
+
+    private void Show()
+    {
+        _pointer.SetActive(true);
+    }
+
+    private void Hide()
+    {
+        _pointer.SetActive(false);
     }
 }

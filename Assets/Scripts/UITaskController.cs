@@ -76,7 +76,8 @@ public class UITaskController : MonoBehaviour
 
     public void Hide()
     {
-        transform.gameObject.SetActive(false);
+        _taskPanel.transform.gameObject.SetActive(false);
+        _rewardTaskPanel.transform.gameObject.SetActive(false);
     }
 
     private void RefreshProgress(Task task)
