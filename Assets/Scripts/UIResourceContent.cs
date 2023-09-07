@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -12,6 +10,7 @@ public class UIResourceContent : MonoBehaviour
     private Key.ResourcePrefs _resource;
 
     public Key.ResourcePrefs Resource => _resource;
+    public int Cost => int.Parse(_cost.text);
 
     public void Init(Key.ResourcePrefs resource, int cost, UnityEngine.Sprite sprite)
     {

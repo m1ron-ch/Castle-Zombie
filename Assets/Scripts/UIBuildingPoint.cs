@@ -20,9 +20,9 @@ public class UIBuildingPoint : MonoBehaviour
 
     public void RefreshUI(List<BuildingPointCost> buildingPointCost)
     {
-/*        Debug.Log(buildingPointCost.Resource + ": " + buildingPointCost.Cost);
-        _resource.RefreshUI(buildingPointCost.Cost);
-*/
+        /*        Debug.Log(buildingPointCost.Resource + ": " + buildingPointCost.Cost);
+                _resource.RefreshUI(buildingPointCost.Cost);
+        */
         foreach (BuildingPointCost cost in buildingPointCost)
         {
             foreach (UIResourceContent content in _buildingResources)
@@ -31,6 +31,16 @@ public class UIBuildingPoint : MonoBehaviour
                 {
                     content.RefreshUI(cost.Cost);
                 }
+            }
+        }
+
+        for (int i = 0; i < _buildingResources.Count; i++) 
+        {
+            if (_buildingResources[i].Cost <= 0)
+            {
+                UIResourceContent content = _buildingResources[i];
+                _buildingResources.Remove(content);
+                Destroy(content.gameObject);
             }
         }
     }

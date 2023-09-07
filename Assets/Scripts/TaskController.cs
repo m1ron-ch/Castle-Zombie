@@ -68,7 +68,7 @@ public class TaskController : MonoBehaviour
 
     private void Start()
     {
-        ResetJSON();
+        // ResetJSON();
         Load();
 
         ShowCurrentTask();
