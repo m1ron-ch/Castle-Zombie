@@ -38,7 +38,8 @@ public class EnemyManager : MonoBehaviour
     private void Start()
     {
         SpawnEnemy(_spawPoints[0].position);
-        StartCoroutine(Spaw());
+        SpawnEnemy(_spawPoints[1].position);
+        // StartCoroutine(Spaw());
     }
     #endregion
 

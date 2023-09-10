@@ -44,7 +44,10 @@ public class ConverResource : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            HandleResourceTransfer();
+            if (!player.IsMove)
+            {
+                HandleResourceTransfer();
+            }
         }
     }
 
@@ -52,7 +55,10 @@ public class ConverResource : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            HandleResourceTransfer();
+            if (!player.IsMove)
+            {
+                HandleResourceTransfer();
+            }
         }
     }
 

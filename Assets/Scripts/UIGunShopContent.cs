@@ -13,4 +13,29 @@ public class UIGunShopContent : MonoBehaviour
 
     private int _lvl = 1;
     private bool _isUse;
+
+    public bool IsUse => _isUse;
+
+    public void Select()
+    {
+
+    }
+
+    public void Unselect()
+    {
+
+    }
+
+    public void Upgrade(string fireRate, string damage)
+    {
+
+        _lvl++;
+        RefreshUI(fireRate, damage);
+    }
+
+    public void RefreshUI(string fireRate, string damage)
+    {
+        _fireRate.text = fireRate;
+        _damage.text = damage;
+    }
 }

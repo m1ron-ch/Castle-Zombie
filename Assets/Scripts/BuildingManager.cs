@@ -55,7 +55,7 @@ public class BuildingManager : MonoBehaviour
 
     private void Start()
     {
-        ResetJSON();
+        // ResetJSON();
 
         _currentBuildingHierarchy = PlayerPrefs.GetInt(Key.Prefs.CurrentBuildingHierarchy.ToString(), 0);
 
